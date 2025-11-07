@@ -1,0 +1,228 @@
+body.admin-page {
+    background-color: var(--light-grey);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.admin-header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.admin-header nav .logo img {
+    height: 35px;
+}
+
+.admin-header nav ul {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    background-color: var(--nav-bg-color);
+    padding: 8px;
+    border-radius: 50px;
+}
+
+.admin-header nav ul a {
+    font-weight: 500;
+    color: var(--text-dark);
+    padding: 8px 24px;
+    border-bottom: none;
+    transition: all 0.3s ease;
+    border-radius: 50px;
+}
+
+.admin-header nav ul a:hover {
+    background-color: var(--hover-color);
+    color: var(--text-light);
+}
+
+.admin-header nav ul a.active {
+     background-color: var(--nav-active-bg-color);
+     color: var(--text-dark);
+     font-weight: 600;
+}
+
+.btn-logout {
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    border: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: var(--hover-color);
+    color: var(--text-light);
+}
+
+main.admin-main {
+    padding: 3rem 0;
+    flex-grow: 1;
+}
+
+.admin-page-title {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+}
+
+.management-container {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+}
+
+.management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.management-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.management-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-bar {
+    position: relative;
+    flex-grow: 1;
+    max-width: 400px;
+}
+
+.search-bar input {
+    padding: 12px 20px 12px 45px;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.btn-add {
+    background: var(--primary-color);
+    color: var(--text-dark);
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+.btn-add:hover {
+    background: var(--hover-color);
+    color: var(--text-light);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.data-table th, .data-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.data-table th {
+    font-weight: 600;
+    color: var(--text-dark);
+    background: none;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.data-table th:last-child, .data-table td:last-child {
+    text-align: right;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.action-buttons a {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.action-buttons .btn-edit {
+    background-color: var(--nav-bg-color);
+    color: var(--secondary-color);
+}
+.action-buttons .btn-edit:hover {
+    background-color: var(--primary-color);
+}
+
+.action-buttons .btn-delete {
+    background-color: #FFE3EC;
+    color: var(--hover-color);
+}
+.action-buttons .btn-delete:hover {
+     background-color: var(--hover-color);
+     color: var(--white);
+}
+
+.admin-footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    background: var(--primary-color);
+}
