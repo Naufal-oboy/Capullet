@@ -131,7 +131,7 @@ main.admin-main {
 
 .btn-add {
     background: var(--primary-color);
-    color: var(--text-dark);
+    color: var(--white);
     padding: 12px 24px;
     border-radius: 50px;
     border: none;
