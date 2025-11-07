@@ -1,0 +1,113 @@
+.about-story-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.about-card {
+    display: flex;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    overflow: hidden;
+    max-width: 950px;
+    width: 100%;
+}
+
+.about-card img {
+    width: 40%;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.about-card-content {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.about-card-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    font-size: 1rem;
+    color: #555;
+}
+
+.about-card-content p:last-child {
+    margin-bottom: 0;
+}
+
+
+.scroll-down-arrow {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    opacity: 0.5;
+}
+
+.vision-mission-section {
+    padding: 5rem 0;
+    background: var(--nav-bg-color); 
+}
+
+.vision-mission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.vision-mission-item {
+    text-align: center;
+}
+
+.vision-mission-item .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--white);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+}
+
+.vision-mission-item h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.vision-mission-item p {
+    color: #555;
+    line-height: 1.7;
+    font-size: 1rem;
+    max-width: 400px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .about-card {
+        flex-direction: column;
+    }
+
+    .about-card img {
+        width: 100%;
+        height: 250px;
+    }
+
+    .about-card-content {
+        padding: 1.5rem;
+    }
+}
