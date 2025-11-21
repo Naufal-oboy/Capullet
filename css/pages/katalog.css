@@ -52,7 +52,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 425px;
+    min-height: 480px;
     width: 300px;
     max-width: 100%;
     flex-grow: 0;
