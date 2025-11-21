@@ -1,0 +1,753 @@
+/* --- START OF FILE global.css --- */
+
+/* 1. IMPORTS & VARIABLES */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary-color: #8DD7FF;
+    --secondary-color: #36454F;
+    --text-dark: #414141;
+    --text-light: #FFFFFF;
+    --white: #FFFFFF;
+    --light-grey: #F8F8F8;
+    --dark-grey: #36454F;
+    --border-color: #D3D3D3;
+    --hover-color: #EE0384;
+    --nav-bg-color: #F0F6F9;
+    --nav-active-bg-color: #8ED7FF;
+    --section-background: #8ed7ff49;
+    --font-family: 'Inter', sans-serif;
+}
+
+/* 2. RESET & BASE STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--white);
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul {
+    list-style: none;
+}
+
+/* 3. GLOBAL UTILITIES */
+section {
+    padding: 5rem 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-title h2 {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-title p {
+    color: #5A6E84;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.view-all-container {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* 4. BUTTON STYLES */
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(141, 215, 255, 0.4);
+}
+
+.btn-primary:hover {
+    background-color: var(--hover-color);
+    color: var(--text-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(238, 3, 132, 0.4);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-2px);
+}
+
+/* 5. HEADER & NAVIGATION */
+header {
+    background-color: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header .logo img {
+    height: 45px;
+}
+
+header nav ul {
+    display: flex;
+    gap: 0.5rem;
+    background-color: var(--nav-bg-color);
+    padding: 15px 10px;
+    border-radius: 50px;
+}
+
+header nav ul a {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #5A6E84;
+    padding: 10px 16px;
+    border-radius: 50px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header nav ul a:hover {
+    background-color: var(--hover-color);
+    color: var(--text-light);
+}
+
+header nav ul a.active {
+    background-color: var(--nav-active-bg-color);
+    color: var(--white);
+}
+
+.cart-button {
+    position: relative;
+    font-size: 1rem;
+    color: var(--white);
+    margin-left: 1.5rem;
+    padding: 20px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+}
+
+.cart-button:hover {
+    background-color: var(--hover-color);
+    color: var(--white);
+}
+
+.cart-count-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: var(--hover-color);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--white);
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 18px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 1rem;
+    z-index: 1001;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 80%;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle.active .bar-top {
+    transform: translateY(7.5px) rotate(45deg);
+}
+
+.menu-toggle.active .bar-middle {
+    opacity: 0;
+}
+
+.menu-toggle.active .bar-bottom {
+    transform: translateY(-7.5px) rotate(-45deg);
+}
+
+.mobile-logout {
+    display: none;
+}
+
+.desktop-logout {
+    display: inline-block;
+}
+
+/* 6. FOOTER */
+footer {
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    padding-top: 4rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding-bottom: 3rem;
+}
+
+.footer-grid h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.footer-grid p,
+.footer-grid a {
+    font-size: 0.9rem;
+    opacity: 1;
+}
+
+.footer-grid .footer-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+.footer-grid .footer-nav a {
+    padding: 0;
+    background: none !important;
+    color: var(--text-dark) !important;
+    font-weight: 400;
+}
+
+.footer-grid .footer-nav a:hover {
+    opacity: 0.8;
+    color: var(--hover-color) !important;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    font-size: 1.5rem;
+    transition: opacity 0.3s;
+}
+
+.social-links a:hover {
+    opacity: 0.8;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 1.5rem 0;
+    font-size: 0.9rem;
+    opacity: 1;
+}
+
+/* 7. COMMON PAGE SECTIONS */
+.page-header-section {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+    text-align: center;
+    background-color: var(--white);
+}
+
+.page-header-section h1,
+.page-header-section h2 {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.page-header-section p {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--dark-grey);
+}
+
+.cta-section {
+    background-color: var(--nav-bg-color);
+    padding: 5rem 0;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 8. ADMIN STYLES */
+body.admin-page {
+    background-color: var(--light-grey);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main.admin-main {
+    padding: 3rem 0;
+    flex-grow: 1;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.admin-page-title {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+}
+
+.admin-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-header nav ul a.active {
+    background-color: var(--nav-active-bg-color);
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.admin-footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    background: var(--primary-color);
+    margin-top: auto;
+}
+
+.management-container {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+.management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.management-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.search-bar {
+    position: relative;
+    flex-grow: 1;
+    max-width: 400px;
+}
+
+.search-bar input {
+    padding: 12px 20px 12px 45px;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    font-family: var(--font-family);
+}
+
+.search-bar i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.btn-logout {
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    background-color: #FFE3EC;
+    color: var(--hover-color);
+    border: 1px solid var(--hover-color);
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: var(--hover-color);
+    color: var(--text-light);
+}
+
+.btn-add {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+    background: var(--hover-color);
+    color: var(--text-light);
+    transform: translateY(-3px);
+}
+
+/* --- TOMBOL AKSI (EDIT & DELETE) - GLOBAL STYLE --- */
+.btn-edit, 
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Jarak ikon dan teks */
+    padding: 10px 20px; /* Padding nyaman */
+    border-radius: 12px; /* Sudut tumpul modern */
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    line-height: 1;
+}
+
+/* Style Tombol Edit (Biru Soft) */
+.btn-edit {
+    background-color: #F0F9FF; /* Biru sangat muda */
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-edit:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+}
+
+/* Style Tombol Hapus (Merah Soft) */
+.btn-delete {
+    background-color: #FEF2F2; /* Merah sangat muda */
+    color: var(--hover-color);
+    border: 1px solid transparent;
+}
+
+.btn-delete:hover {
+    background-color: var(--hover-color);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+/* 9. SWEETALERT2 CUSTOMIZATION */
+div:where(.swal2-container) div:where(.swal2-popup) {
+    border-radius: 24px !important;
+    font-family: var(--font-family) !important;
+    padding: 2rem !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+div:where(.swal2-container) h2:where(.swal2-title) {
+    color: var(--secondary-color) !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+}
+
+div:where(.swal2-container) div:where(.swal2-html-container) {
+    color: #666 !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
+
+div:where(.swal2-container) input.swal2-input {
+    border-radius: 50px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: none !important;
+    font-size: 1rem !important;
+    padding: 0 1.5rem !important;
+    height: 3rem !important;
+    margin: 1.5rem auto !important;
+    width: 90% !important;
+    transition: all 0.3s ease;
+}
+
+div:where(.swal2-container) input.swal2-input:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(141, 215, 255, 0.3) !important;
+}
+
+div:where(.swal2-container) .swal2-actions {
+    gap: 1rem;
+    margin-top: 1.5rem !important;
+}
+
+div:where(.swal2-container) button.swal2-styled {
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    padding: 12px 32px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+}
+
+div:where(.swal2-container) button.swal2-confirm {
+    background-color: var(--primary-color) !important;
+    color: var(--white) !important;
+}
+
+div:where(.swal2-container) button.swal2-confirm:hover {
+    background-color: var(--hover-color) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(238, 3, 132, 0.3) !important;
+}
+
+div:where(.swal2-container) button.swal2-cancel {
+    background-color: #f0f0f0 !important;
+    color: #666 !important;
+}
+
+div:where(.swal2-container) button.swal2-cancel:hover {
+    background-color: #e0e0e0 !important;
+    color: #333 !important;
+}
+
+/* 10. MEDIA QUERIES */
+@media (max-width: 992px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
+    }
+
+    /* Responsive Navbar */
+    header nav {
+        position: relative;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    header nav ul {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background-color: var(--white);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        border-radius: 0 0 20px 20px;
+        transition: max-height 0.4s ease-in-out, padding 0.4s ease;
+        gap: 0;
+    }
+
+    header nav ul.slide {
+        max-height: 400px;
+        padding: 1rem 0;
+    }
+
+    header nav ul li {
+        width: 100%;
+        text-align: center;
+    }
+
+    header nav ul a {
+        display: block;
+        padding: 15px;
+        margin: 5px 1rem;
+        border-radius: 12px;
+        width: auto;
+    }
+
+    /* Mobile Logout Logic */
+    .desktop-logout {
+        display: none;
+    }
+
+    .mobile-logout {
+        display: block;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .mobile-logout a {
+        background-color: #FFE3EC !important;
+        color: var(--hover-color) !important;
+        border: 1px solid var(--hover-color);
+        font-weight: 700 !important;
+        text-align: center;
+    }
+
+    .mobile-logout a:hover {
+        background-color: var(--hover-color) !important;
+        color: var(--white) !important;
+    }
+
+    /* Mobile Typography & Layout */
+    body {
+        font-size: 15px;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    .page-header-section,
+    .admin-main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    .cart-button {
+        margin-left: 0;
+        width: 45px;
+        height: 45px;
+        padding: 0;
+    }
+
+    .btn {
+        padding: 10px 24px;
+        font-size: 0.95rem;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .container {
+        width: 92%;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .footer-grid .footer-nav ul {
+        align-items: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .btn-edit, .btn-delete {
+        flex: 1; /* Memenuhi lebar container */
+        padding: 12px;
+    }
+}
