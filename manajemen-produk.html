@@ -26,6 +26,9 @@
                 <li><a href="manajemen-produk.html" class="active">Produk</a></li>
                 <li><a href="manajemen-kategori.html">Kategori</a></li>
                 <li><a href="manajemen-kegiatan.html">Kegiatan</a></li>
+                <li><a href="manajemen-tentang-kami.html">Tentang Kami</a></li>
+                <li><a href="manajemen-kontak.html">Kontak</a></li>
+                <li><a href="manajemen-faqs.html">FAQs</a></li>
                 <li class="mobile-logout"><a href="#">Logout</a></li>
             </ul>
 
@@ -55,7 +58,6 @@
             <!-- Grid Produk (Diisi oleh JS) -->
             <div class="product-management-grid" id="productGridContainer">
                 <!-- Item produk akan di-render di sini oleh JS -->
-                <!-- Placeholder loading atau kosong -->
                 <p style="text-align: center; width: 100%; color: #888;">Memuat data...</p>
             </div>
         </div>
@@ -65,17 +67,18 @@
             <div class="product-form-layout">
                 <!-- Kolom Kiri: Gambar & Tombol -->
                 <div class="form-left-col">
+                    <!-- Preview Gambar -->
                     <div class="image-preview-box">
-                        <img id="previewImage" src="images/placeholder-product.jpg" alt="Preview">
+                        <img id="previewImage" src="images/placeholder-product.jpg" alt="Preview Produk">
                     </div>
                     
+                    <!-- Input File -->
                     <div class="form-group">
-                        <label for="productImageInput">File Gambar</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="productImageInput" accept="image/*">
-                        </div>
+                        <label for="productImageInput">Gambar Produk</label>
+                        <input type="file" id="productImageInput" accept="image/*">
                     </div>
 
+                    <!-- Tombol Aksi Form -->
                     <div class="form-actions-buttons">
                         <button class="btn-edit" id="btnCancelForm" style="justify-content: center;">
                             <i class="fas fa-undo"></i> Kembali

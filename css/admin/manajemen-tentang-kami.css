@@ -1,0 +1,162 @@
+/* 1. Container Form Utama */
+.page-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* Jarak antar kartu section */
+}
+
+/* 2. Styling Card Section (Kotak Putih) */
+.form-section {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+/* 3. Form Groups (Label & Inputs) */
+.form-group {
+    margin-bottom: 1.8rem;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+}
+
+/* Textarea Styling */
+.form-group textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #fcfcfc;
+    resize: vertical; /* Hanya bisa ditarik ke bawah */
+}
+
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    background-color: var(--white);
+    box-shadow: 0 0 0 4px rgba(141, 215, 255, 0.2);
+}
+
+/* Helper Text (Small) */
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: #888;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* 4. Image Preview Section */
+.image-preview {
+    width: 100%;
+    height: 300px; /* Tinggi fix agar rapi */
+    background-color: #f4f4f4;
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-preview:hover img {
+    transform: scale(1.02);
+}
+
+/* Input File Customization */
+.file-input {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.file-input::file-selector-button {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    background-color: var(--white);
+    color: var(--secondary-color);
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.file-input::file-selector-button:hover {
+    background-color: var(--nav-bg-color);
+    border-color: var(--secondary-color);
+}
+
+/* 5. Tombol Simpan (Floating / Fixed at Bottom or Inline) */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1rem;
+}
+
+.btn-save {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 14px 36px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(141, 215, 255, 0.4);
+}
+
+.btn-save:hover {
+    background-color: var(--hover-color);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(238, 3, 132, 0.3);
+}
+
+.btn-save i {
+    font-size: 1.1rem;
+}
+
+/* --- Responsive Mobile --- */
+@media (max-width: 768px) {
+    .form-section {
+        padding: 1.5rem;
+    }
+
+    .image-preview {
+        height: 200px;
+    }
+
+    .btn-save {
+        width: 100%; /* Tombol simpan jadi full width di HP */
+        justify-content: center;
+    }
+}
