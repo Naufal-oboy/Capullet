@@ -500,7 +500,7 @@ main.admin-main {
     justify-content: center;
     gap: 8px; /* Jarak ikon dan teks */
     padding: 10px 20px; /* Padding nyaman */
-    border-radius: 12px; /* Sudut tumpul modern */
+    border-radius: 8px; /* Sudut tumpul modern */
     font-size: 0.9rem;
     font-weight: 600;
     border: none;
