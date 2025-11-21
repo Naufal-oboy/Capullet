@@ -473,7 +473,7 @@ main.admin-main {
     background: var(--primary-color);
     color: var(--white);
     padding: 12px 24px;
-    border-radius: 50px;
+    border-radius: 8px;
     border: none;
     font-weight: 600;
     cursor: pointer;
