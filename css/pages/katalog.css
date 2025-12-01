@@ -134,7 +134,7 @@
     padding: 12px 20px;
     border: none;
     border-radius: 10px;
-    background: var(--primary-color, #00a8ff);
+    background: var(--primary-color);
     box-shadow: 0 4px 10px rgba(141, 215, 255, 0.4);
     color: var(--white, #fff);
     font-size: 1rem;
@@ -144,7 +144,7 @@
 }
 
 .btn-plus-cart:hover {
-    background: var(--hover-btn-bg, #0097e6);
+    background: var(--hover-color);
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(141, 215, 255, 0.6);
 }
