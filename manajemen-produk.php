@@ -1,3 +1,6 @@
+<?php
+require_once 'includes/auth-check.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,7 +14,7 @@
 <body class="admin-page">
     <header class="admin-header">
         <nav class="container">
-            <a href="dashboard-admin.html" class="logo">
+            <a href="dashboard-admin.php" class="logo">
                 <img src="images/logo.png" alt="Logo Capullet">
             </a>
             
@@ -22,13 +25,14 @@
             </div>
 
             <ul>
-                <li><a href="dashboard-admin.html">Dashboard</a></li>
-                <li><a href="manajemen-produk.html" class="active">Produk</a></li>
-                <li><a href="manajemen-kategori.html">Kategori</a></li>
-                <li><a href="manajemen-kegiatan.html">Kegiatan</a></li>
-                <li><a href="manajemen-tentang-kami.html">Tentang Kami</a></li>
-                <li><a href="manajemen-kontak.html">Kontak</a></li>
-                <li><a href="manajemen-faqs.html">FAQs</a></li>
+                <li><a href="dashboard-admin.php">Dashboard</a></li>
+                <li><a href="manajemen-produk.php" class="active">Produk</a></li>
+                <li><a href="manajemen-kategori.php">Kategori</a></li>
+                <li><a href="manajemen-penjualan.php">Penjualan</a></li>
+                <li><a href="manajemen-kegiatan.php">Kegiatan</a></li>
+                <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
+                <li><a href="manajemen-kontak.php">Kontak</a></li>
+                <li><a href="manajemen-faqs.php">FAQs</a></li>
                 <li class="mobile-logout"><a href="#">Logout</a></li>
             </ul>
 
@@ -155,12 +159,13 @@
     <footer class="admin-footer">
         <p>© 2025 Capullet. All rights reserved.</p>
     </footer>
-
+    
     <!-- SCRIPTS -->
     <!-- 1. SweetAlert2 (Wajib untuk popup alert) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- 2. Global JS (Hamburger menu, dll) -->
     <script src="js/global.js"></script>
+    <script src="js/admin/logout.js"></script>
     <!-- 3. Script Khusus Halaman Ini -->
     <script src="js/admin/manajemen-produk.js"></script>
 </body>

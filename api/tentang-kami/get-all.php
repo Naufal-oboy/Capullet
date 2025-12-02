@@ -1,0 +1,23 @@
+<?php
+header('Content-Type: application/json');
+require_once __DIR__ . '/../config/database.php';
+
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    
+    $stmt = $pdo->query("SELECT * FROM tentang_kami ORDER BY urutan ASC");
+    $sections = $stmt->fetchAll();
+    
+    echo json_encode([
+        'success' => true,
+        'data' => $sections
+    ]);
+    
+} catch(PDOException $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
+    ]);
+}
+?>

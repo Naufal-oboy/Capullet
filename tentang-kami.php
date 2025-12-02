@@ -1,4 +1,24 @@
 <?php
+require_once __DIR__ . '/api/config/database.php';
+$sections = [];
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    $stmt = $pdo->query("SELECT * FROM tentang_kami WHERE is_aktif = 1 ORDER BY urutan ASC, id ASC");
+    $rows = $stmt->fetchAll();
+    foreach ($rows as $row) {
+        $key = strtolower($row['judul_section'] ?? '');
+        $sections[$key] = $row;
+    }
+} catch (Exception $e) {
+    $sections = [];
+}
+function e($s){return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');}
+$imgPath = isset($sections['about_image']['gambar']) && $sections['about_image']['gambar'] ? $sections['about_image']['gambar'] : 'images/about-product.jpg';
+$deskripsi = isset($sections['deskripsi']['konten']) ? $sections['deskripsi']['konten'] : '';
+$visi = isset($sections['visi']['konten']) ? $sections['visi']['konten'] : '';
+$misi = isset($sections['misi']['konten']) ? $sections['misi']['konten'] : '';
+$misiItems = array_filter(array_map('trim', preg_split("/\r?\n/", $misi)));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -40,14 +60,13 @@
 
         <section class="about-story-section container">
             <div class="about-card">
-                <img src="images/about-product.jpg" alt="Produk Capullet">
+                <img src="<?php echo e($imgPath); ?>" alt="Produk Capullet" onerror="this.src='images/about-product.jpg'">
                 <div class="about-card-content">
-                    <p>
-                        Capullet adalah sebuah perusahaan yang membuat kreasi makanan olahan keripik dan frozen food. Capullet Pangan Lumintu dibangun untuk pelayanan kebutuhan yang dikhususkan untuk penyediaan cemilan frozen dan olahan keripik yang berkualitas dan tentunya dengan cita rasa nomor satu demi memuaskan kebutuhan pelanggan kami.
-                    </p>
-                    <p>
-                        Perusahaan kami juga menjamin kebersihan produk yang kami sajikan. Semua ini didukung dengan kualitas terbaik dari bahan baku pembuatan makanan kami.
-                    </p>
+                    <?php if ($deskripsi): ?>
+                        <p><?php echo nl2br(e($deskripsi)); ?></p>
+                    <?php else: ?>
+                        <p>Capullet adalah sebuah perusahaan yang membuat kreasi makanan olahan keripik dan frozen food.</p>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
@@ -58,16 +77,22 @@
                     <div class="vision-mission-item">
                         <div class="icon"><i class="fas fa-eye"></i></div>
                         <h3>Visi</h3>
-                        <p>Menjadi berkat bagi sesama manusia melalui pemberdayaan, inovasi, dan kepemimpinan.</p>
+                        <p><?php echo $visi ? e($visi) : 'Menjadi berkat melalui pemberdayaan, inovasi, dan kepemimpinan.'; ?></p>
                     </div>
                     <div class="vision-mission-item">
                         <div class="icon"><i class="fas fa-rocket"></i></div>
                         <h3>Misi</h3>
-                        <ul>
-                            <li>Memberdayakan perempuan, terutama ibu-ibu rumah tangga agar mampu berkarya dan berdiri di kaki sendiri.</li>
-                            <li>Menghadirkan produk terbaik dengan berbagai rasa tapi tetap dengan citarasa buatan tangan sendiri bukan pabrikan.</li>
-                            <li>Mengolah bahan yang dianggap limbah, manjadi makanan yang enak dan nikmat dikonsumsi serta bernilai ekonomis tinggi.</li>
-                        </ul>
+                        <?php if (!empty($misiItems)): ?>
+                            <ul>
+                                <?php foreach ($misiItems as $item): ?>
+                                    <li><?php echo e($item); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <ul>
+                                <li>Memberdayakan perempuan agar mampu berkarya dan mandiri.</li>
+                            </ul>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

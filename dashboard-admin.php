@@ -6,12 +6,12 @@ require_once 'includes/auth-check.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Kategori - Capullet</title>
+    <title>Dashboard Admin - Capullet</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/admin/manajemen-kategori.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/admin/dashboard-admin.css">
 </head>
-<body class="admin-page">
+<body class="admin-page dashboard-page">
     <header>
         <nav class="container">
             <a href="dashboard-admin.php" class="logo">
@@ -25,9 +25,9 @@ require_once 'includes/auth-check.php';
             </div>
 
             <ul>
-                <li><a href="dashboard-admin.php">Dashboard</a></li>
+                <li><a href="dashboard-admin.php" class="active">Dashboard</a></li>
                 <li><a href="manajemen-produk.php">Produk</a></li>
-                <li><a href="manajemen-kategori.php" class="active">Kategori</a></li>
+                <li><a href="manajemen-kategori.php">Kategori</a></li>
                 <li><a href="manajemen-penjualan.php">Penjualan</a></li>
                 <li><a href="manajemen-kegiatan.php">Kegiatan</a></li>
                 <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
@@ -41,31 +41,20 @@ require_once 'includes/auth-check.php';
     </header>
 
     <main class="admin-main container">
-        <h1 class="admin-page-title">MANAJEMEN KATEGORI PRODUK</h1>
-        <div class="management-container">
-            <div class="management-header">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Cari Kategori...">
-                </div>
-                <a href="#" class="btn-add"><i class="fas fa-plus"></i> Tambah Kategori</a>
-            </div>
+        <section class="dashboard-welcome">
+            <h1>SELAMAT DATANG, ADMIN!</h1>
+            <p>Silakan melakukan manajemen produk, kategori produk, dan kegiatan.</p>
+        </section>
 
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nama Kategori</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <section class="dashboard-quick-links">
+             <a href="manajemen-produk.php" class="dashboard-link-card">Manajemen Produk</a>
+             <a href="manajemen-kategori.php" class="dashboard-link-card">Manajemen Kategori Produk</a>
+             <a href="manajemen-penjualan.php" class="dashboard-link-card">Manajemen Penjualan</a>
+             <a href="manajemen-kegiatan.php" class="dashboard-link-card">Manajemen Kegiatan</a>
+             <a href="manajemen-tentang-kami.php" class="dashboard-link-card">Manajemen Tentang Kami</a>
+             <a href="manajemen-kontak.php" class="dashboard-link-card">Manajemen Kontak</a>
+             <a href="manajemen-faqs.php" class="dashboard-link-card">Manajemen FAQS</a>
+        </section>
     </main>
 
     <footer class="admin-footer">
@@ -74,7 +63,5 @@ require_once 'includes/auth-check.php';
     
     <script src="js/global.js"></script>
     <script src="js/admin/logout.js"></script>
-    <script src="js/admin/manajemen-kategori.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

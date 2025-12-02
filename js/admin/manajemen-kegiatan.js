@@ -37,8 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // Ambil data dari LocalStorage atau gunakan default
-    let activities = JSON.parse(localStorage.getItem('capullet_activities')) || defaultActivities;
+    // Data dari database
+    let activities = [];
+
+    async function loadActivities() {
+        gridContainer.innerHTML = '<p style="text-align:center; color:#888; padding:2rem; width:100%;">Memuat data...</p>';
+        try {
+            const res = await fetch('api/kegiatan/get-all.php', { cache: 'no-store' });
+            const result = await res.json();
+            if (!result.success) throw new Error(result.message || 'Gagal memuat kegiatan');
+            activities = (result.data || []).map(r => ({
+                id: parseInt(r.id_kegiatan),
+                title: r.judul,
+                description: r.deskripsi || '',
+                image: r.gambar || 'images/placeholder-image.jpg',
+                lokasi: r.lokasi || '',
+                tanggal_kegiatan: r.tanggal_kegiatan,
+                is_aktif: r.is_aktif == 1
+            }));
+            renderActivities(searchInput.value.trim());
+        } catch (e) {
+            console.error(e);
+            gridContainer.innerHTML = '<p style="text-align:center; color:#c00; padding:2rem; width:100%;">Error memuat data kegiatan</p>';
+        }
+    }
 
     // --- 3. RENDER FUNCTIONS ---
     
@@ -121,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. CRUD ACTIONS ---
 
     // SAVE (Create / Update)
-    btnSave.addEventListener('click', () => {
+    btnSave.addEventListener('click', async () => {
         // Validasi Sederhana
         if (!inpTitle.value.trim() || !inpDesc.value.trim()) {
             Swal.fire('Error', 'Judul dan Deskripsi wajib diisi!', 'error');
@@ -129,37 +151,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const isEdit = inpId.value !== '';
-        const activityData = {
-            id: isEdit ? parseInt(inpId.value) : Date.now(),
-            title: inpTitle.value,
-            description: inpDesc.value,
-            // Gunakan gambar baru jika ada, jika tidak gunakan gambar lama (saat edit) atau placeholder
-            image: currentImageBase64 || (isEdit ? imgPreview.src : 'images/placeholder-image.jpg')
-        };
-
-        if (isEdit) {
-            // Update existing
-            const index = activities.findIndex(a => a.id === activityData.id);
-            if (index !== -1) activities[index] = activityData;
-        } else {
-            // Create new
-            activities.push(activityData);
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        try {
+            const endpoint = isEdit ? 'api/kegiatan/update.php' : 'api/kegiatan/create.php';
+            const payload = {
+                id_kegiatan: isEdit ? parseInt(inpId.value) : undefined,
+                judul: inpTitle.value.trim(),
+                deskripsi: inpDesc.value.trim(),
+                lokasi: '',
+                tanggal_kegiatan: null,
+                gambar: null,
+                gambar_base64: currentImageBase64 || null
+            };
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (!result.success) throw new Error(result.message || 'Gagal menyimpan kegiatan');
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: isEdit ? 'Kegiatan diperbarui.' : 'Kegiatan ditambahkan.',
+                timer: 1400,
+                showConfirmButton: false
+            }).then(async () => {
+                hideForm();
+                await loadActivities();
+            });
+        } catch (err) {
+            console.error(err);
+            Swal.fire('Error', err.message, 'error');
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<i class=\"fas fa-save\"></i> Simpan';
         }
-
-        // Simpan ke LocalStorage
-        localStorage.setItem('capullet_activities', JSON.stringify(activities));
-
-        // Feedback User
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: isEdit ? 'Kegiatan diperbarui.' : 'Kegiatan ditambahkan.',
-            timer: 1500,
-            showConfirmButton: false
-        }).then(() => {
-            hideForm();
-            renderActivities();
-        });
     });
 
     // EDIT (Global Function)
@@ -193,10 +221,22 @@ document.addEventListener('DOMContentLoaded', () => {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                activities = activities.filter(a => a.id !== id);
-                localStorage.setItem('capullet_activities', JSON.stringify(activities));
-                renderActivities();
-                Swal.fire('Terhapus!', 'Kegiatan berhasil dihapus.', 'success');
+                (async () => {
+                    try {
+                        const res = await fetch('api/kegiatan/delete.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id_kegiatan: id })
+                        });
+                        const result = await res.json();
+                        if (!result.success) throw new Error(result.message || 'Gagal menghapus');
+                        Swal.fire('Terhapus!', 'Kegiatan berhasil dihapus.', 'success');
+                        await loadActivities();
+                    } catch (err) {
+                        console.error(err);
+                        Swal.fire('Error', err.message, 'error');
+                    }
+                })();
             }
         });
     };
@@ -213,5 +253,5 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCancel.addEventListener('click', hideForm);
 
     // --- 7. INITIALIZE ---
-    renderActivities();
+    loadActivities();
 });

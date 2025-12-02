@@ -1,3 +1,15 @@
+<?php
+require_once __DIR__ . '/api/config/database.php';
+$pdo = null;
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    $stmt = $pdo->query("SELECT * FROM kegiatan WHERE is_aktif = 1 ORDER BY created_at DESC");
+    $activities = $stmt->fetchAll();
+} catch (Exception $e) {
+    $activities = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,7 +23,7 @@
 <body>
     <header>
         <nav class="container">
-            <a href="index.html" class="logo">
+            <a href="index.php" class="logo">
                 <img src="images/logo.png" alt="Logo Capullet">
             </a>
             <div class="menu-toggle">
@@ -20,13 +32,13 @@
                 <span class="bar-bottom"></span>
             </div>
             <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="katalog.html">Katalog</a></li>
-                <li><a href="kegiatan.html" class="active">Kegiatan</a></li>
-                <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                <li><a href="kontak.html">Kontak</a></li>
+                <li><a href="index.php">Beranda</a></li>
+                <li><a href="katalog.php">Katalog</a></li>
+                <li><a href="kegiatan.php" class="active">Kegiatan</a></li>
+                <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                <li><a href="kontak.php">Kontak</a></li>
             </ul>
-            <a href="keranjang.html" class="cart-button"><i class="fas fa-shopping-cart"></i></a>
+            <a href="keranjang.php" class="cart-button"><i class="fas fa-shopping-cart"></i></a>
         </nav>
     </header>
 
@@ -37,28 +49,26 @@
         </section>
 
         <section class="activities-list container">
-            <article class="activity-item">
-                <img src="images/kita-indonesia-pasar-seni-tradisional.jpg" alt="Kita Indonesia Pasar Seni Tradisional">
-                <div class="activity-content">
-                    <h3>Kita Indonesia Pasar Seni Tradisional</h3>
-                    <p>Capullet turut berpartisipasi dalam acara Kita Indonesia Pasar Seni Tradisional yang diselenggarakan oleh RBI Samarinda di Halaman GOR Segiri, memberikan kesempatan bagi pengunjung untuk menikmati berbagai produk unggulan kami.</p>
-                </div>
-            </article>
-
-            <article class="activity-item">
-                <img src="images/pojok-umkm.jpg" alt="Pojok UMKM">
-                <div class="activity-content">
-                    <h3>Pojok UMKM</h3>
-                    <p>Setiap akhir pekan, Capullet hadir di Lobby Hotel Puri Senyiur dalam acara Pojok UMKM. Ini adalah kesempatan emas untuk menemukan dan membeli produk-produk spesial kami langsung di lokasi.</p>
-                </div>
-            </article>
+            <?php if (empty($activities)): ?>
+                <p style="text-align:center; color:#888; padding:2rem; width:100%;">Belum ada kegiatan aktif.</p>
+            <?php else: ?>
+                <?php foreach ($activities as $act): ?>
+                    <article class="activity-item">
+                        <img src="<?php echo htmlspecialchars($act['gambar'] ?: 'images/placeholder-image.jpg'); ?>" alt="<?php echo htmlspecialchars($act['judul']); ?>" onerror="this.src='images/placeholder-image.jpg'">
+                        <div class="activity-content">
+                            <h3><?php echo htmlspecialchars($act['judul']); ?></h3>
+                            <p><?php echo htmlspecialchars($act['deskripsi']); ?></p>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </section>
 
         <section class="cta-section">
             <div class="container">
                 <h2>Ingin berkolaborasi?</h2>
                 <p>Kami terbuka untuk setiap peluang kerja sama dan cita rasa baru. Ayo mulai sekarang!</p>
-                <a href="kontak.html" class="btn btn-primary">Hubungi Kami</a>
+                <a href="kontak.php" class="btn btn-primary">Hubungi Kami</a>
             </div>
         </section>
     </main>
@@ -73,11 +83,11 @@
                 <div class="footer-nav">
                     <h3>Navigasi Cepat</h3>
                     <ul>
-                        <li><a href="index.html">Beranda</a></li>
-                        <li><a href="katalog.html">Katalog</a></li>
-                        <li><a href="kegiatan.html">Kegiatan</a></li>
-                        <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                        <li><a href="kontak.html">Kontak</a></li>
+                        <li><a href="index.php">Beranda</a></li>
+                        <li><a href="katalog.php">Katalog</a></li>
+                        <li><a href="kegiatan.php">Kegiatan</a></li>
+                        <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                        <li><a href="kontak.php">Kontak</a></li>
                     </ul>
                 </div>
                 <div class="footer-address">

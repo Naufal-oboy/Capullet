@@ -1,3 +1,22 @@
+<?php
+require_once __DIR__ . '/api/config/database.php';
+$contactInfo = null;
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    $stmt = $pdo->query("SELECT * FROM contact_info LIMIT 1");
+    $contactInfo = $stmt->fetch();
+} catch (Exception $e) {
+    $contactInfo = null;
+}
+function e($s){return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');}
+$wa = $contactInfo && $contactInfo['whatsapp'] ? $contactInfo['whatsapp'] : '6282251004290';
+$ig = $contactInfo && $contactInfo['instagram'] ? $contactInfo['instagram'] : 'capull3t.smd';
+$addr = $contactInfo && $contactInfo['address'] ? $contactInfo['address'] : 'Jl. Subulussalam I no. 9, Sidomulyo, Kec. Samarinda Ilir, Kota Samarinda, Kalimantan Timur 75116';
+$maps = $contactInfo && $contactInfo['maps_embed'] ? $contactInfo['maps_embed'] : 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.664448375631!2d117.1620441747806!3d-0.4924445353086088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2df67fb548c8658d%3A0xe7b0004b646bfa61!2sKeripik%20usus%20dan%20kulit%20samarinda%20Capullet!5e0!3m2!1sen!2sid!4v1683033281234!5m2!1sen!2sid';
+$hours = $contactInfo && $contactInfo['hours'] ? $contactInfo['hours'] : "Senin - Sabtu: 08.00 – 17.00\nMinggu: Tutup";
+$hoursLines = array_filter(array_map('trim', preg_split("/\r?\n/", $hours)));
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,7 +30,7 @@
 <body>
     <header>
         <nav class="container">
-            <a href="index.html" class="logo">
+            <a href="index.php" class="logo">
                 <img src="images/logo.png" alt="Logo Capullet">
             </a>
             <div class="menu-toggle">
@@ -20,13 +39,13 @@
                 <span class="bar-bottom"></span>
             </div>
             <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="katalog.html">Katalog</a></li>
-                <li><a href="kegiatan.html">Kegiatan</a></li>
-                <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                <li><a href="kontak.html" class="active">Kontak</a></li>
+                <li><a href="index.php">Beranda</a></li>
+                <li><a href="katalog.php">Katalog</a></li>
+                <li><a href="kegiatan.php">Kegiatan</a></li>
+                <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                <li><a href="kontak.php" class="active">Kontak</a></li>
             </ul>
-            <a href="keranjang.html" class="cart-button"><i class="fas fa-shopping-cart"></i></a>
+            <a href="keranjang.php" class="cart-button"><i class="fas fa-shopping-cart"></i></a>
         </nav>
     </header>
 
@@ -43,16 +62,16 @@
                         <i class="fab fa-whatsapp"></i>
                     </div>
                     <h3>Chat di WhatsApp</h3>
-                    <p class="contact-detail">+62 822 5100 4290</p>
-                    <a href="https://wa.me/6282251004290" target="_blank" class="btn btn-primary">Chat Kami Sekarang</a>
+                    <p class="contact-detail">+<?php echo e($wa); ?></p>
+                    <a href="https://wa.me/<?php echo e($wa); ?>" target="_blank" class="btn btn-primary">Chat Kami Sekarang</a>
                 </div>
                 <div class="contact-card">
                      <div class="icon-background">
                         <i class="fab fa-instagram"></i>
                     </div>
                     <h3>Ikuti di Instagram</h3>
-                    <p class="contact-detail">@capull3t.smd</p>
-                    <a href="https://www.instagram.com/capull3t.smd" target="_blank" class="btn btn-primary">Kunjungi Instagram kami</a>
+                    <p class="contact-detail">@<?php echo e($ig); ?></p>
+                    <a href="https://www.instagram.com/<?php echo e($ig); ?>" target="_blank" class="btn btn-primary">Kunjungi Instagram kami</a>
                 </div>
             </div>
         </section>
@@ -64,7 +83,7 @@
                 </div>
                 <div class="location-grid">
                     <div class="location-map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.664448375631!2d117.1620441747806!3d-0.4924445353086088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2df67fb548c8658d%3A0xe7b0004b646bfa61!2sKeripik%20usus%20dan%20kulit%20samarinda%20Capullet!5e0!3m2!1sen!2sid!4v1683033281234!5m2!1sen!2sid" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="<?php echo e($maps); ?>" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                     <div class="location-info">
                         <h3>Keripik Usus dan Kulit Samarinda Capulet</h3>
@@ -72,12 +91,13 @@
                             <span>5,0</span> ★★★★★
                         </div>
                         <address>
-                            Jl. Subulussalam I no. 9, Sidomulyo, Kec. Samarinda Ilir, Kota Samarinda, Kalimantan Timur 75116
+                            <?php echo e($addr); ?>
                         </address>
                         <h4>Jam Operasional</h4>
                         <ul>
-                            <li>Senin - Sabtu: 08.00 – 17.00</li>
-                            <li>Minggu: Tutup</li>
+                            <?php foreach ($hoursLines as $line): ?>
+                                <li><?php echo e($line); ?></li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
                 </div>

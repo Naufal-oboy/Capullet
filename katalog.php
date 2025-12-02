@@ -12,7 +12,7 @@
 <body>
     <header>
         <nav class="container">
-            <a href="index.html" class="logo">
+            <a href="index.php" class="logo">
                 <img src="images/logo.png" alt="Logo Capullet">
             </a>
             <div class="menu-toggle">
@@ -21,13 +21,13 @@
                 <span class="bar-bottom"></span>
             </div>
             <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="katalog.html" class="active">Katalog</a></li>
-                <li><a href="kegiatan.html">Kegiatan</a></li>
-                <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                <li><a href="kontak.html">Kontak</a></li>
+                <li><a href="index.php">Beranda</a></li>
+                <li><a href="katalog.php" class="active">Katalog</a></li>
+                <li><a href="kegiatan.php">Kegiatan</a></li>
+                <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                <li><a href="kontak.php">Kontak</a></li>
             </ul>
-            <a href="keranjang.html" class="cart-button"><i class="fas fa-shopping-cart"></i></a>
+            <a href="keranjang.php" class="cart-button"><i class="fas fa-shopping-cart"></i></a>
         </nav>
     </header>
 

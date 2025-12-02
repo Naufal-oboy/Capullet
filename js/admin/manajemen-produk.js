@@ -23,86 +23,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const inpFriedPrice = document.getElementById('friedPrice');
 
     // --- DATA INITIALIZATION ---
-    // Ambil Kategori dari LocalStorage (dari fitur Manajemen Kategori sebelumnya)
-    const categories = JSON.parse(localStorage.getItem('capullet_categories')) || [
-        {id: 1, name: 'Keripik'}, {id: 2, name: 'Risol'}, {id: 3, name: 'Minuman'}
-    ];
-
-    // Default Products (Jika kosong)
-// Default Products (Data awal jika LocalStorage kosong)
-    const defaultProducts = [
-        {
-            id: 1,
-            name: "Keripik Mustofa Usus",
-            description: "Olahan usus ayam pilihan yang renyah dan gurih.",
-            price: 23000,
-            category: "Keripik",
-            image: "images/keripik-mustofa-usus.jpg",
-            isBestSeller: true,
-            isAvailable: true,
-            canFried: false
-        },
-        {
-            id: 2,
-            name: "Keripik Mustofa Kulit",
-            description: "Kulit ayam crispy dengan bumbu mustofa khas.",
-            price: 25000,
-            category: "Keripik",
-            image: "images/keripik-mustofa-kulit.jpg",
-            isBestSeller: false,
-            isAvailable: true,
-            canFried: false
-        },
-        {
-            id: 3,
-            name: "American Risol",
-            description: "Isian smokebeef, telur, keju, dan mayones.",
-            price: 33000,
-            category: "Risol",
-            image: "images/american-risol.jpg",
-            isBestSeller: true,
-            isAvailable: true,
-            canFried: true,
-            friedPrice: 3000
-        },
-        {
-            id: 4,
-            name: "American Mentai",
-            description: "Risol premium dengan saus mentai yang creamy.",
-            price: 35000,
-            category: "Risol",
-            image: "images/american-mentai.jpg",
-            isBestSeller: false,
-            isAvailable: true,
-            canFried: true,
-            friedPrice: 3000
-        },
-        {
-            id: 5,
-            name: "Lemongrass",
-            description: "Minuman segar serai dan lemon.",
-            price: 7000,
-            category: "Minuman",
-            image: "images/lemongrass.jpg",
-            isBestSeller: false,
-            isAvailable: true,
-            canFried: false
-        },
-        {
-            id: 6,
-            name: "Es Nutella",
-            description: "Minuman coklat Nutella yang manis dan creamy.",
-            price: 20000,
-            category: "Minuman",
-            image: "images/es-nutella.jpg",
-            isBestSeller: false,
-            isAvailable: true,
-            canFried: false
-        }
-    ];
-
-    let products = JSON.parse(localStorage.getItem('capullet_products')) || defaultProducts;
+    let categories = [];
+    let products = [];
     let currentImageBase64 = ''; // Untuk nyimpen string gambar
+
+    // Load categories from database
+    async function loadCategories() {
+        try {
+            const response = await fetch('api/get-categories.php');
+            const result = await response.json();
+            
+            if (result.success) {
+                categories = result.categories.map(c => ({
+                    id: parseInt(c.id_kategori),
+                    name: c.nama_kategori
+                }));
+                renderCategories();
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            // Fallback to default
+            categories = [
+                {id: 1, name: 'Keripik'}, 
+                {id: 2, name: 'Risol'}, 
+                {id: 3, name: 'Minuman'}
+            ];
+            renderCategories();
+        }
+    }
+
+    // Load products from database
+    async function loadProducts() {
+        try {
+            const response = await fetch('api/get-products.php', {
+                cache: 'no-store',
+                headers: {'Cache-Control': 'no-cache'}
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+                products = result.products.map(p => ({
+                    id: parseInt(p.id_produk),
+                    name: p.nama_produk,
+                    description: p.deskripsi || '',
+                    price: parseFloat(p.harga),
+                    category: p.nama_kategori || 'Lainnya',
+                    categoryId: parseInt(p.id_kategori),
+                    image: p.gambar_utama || 'images/placeholder.jpg',
+                    isBestSeller: p.is_best_seller == 1,
+                    isAvailable: p.is_aktif == 1,
+                    canFried: false,
+                    friedPrice: 0
+                }));
+                console.log('Products loaded from DB:', products);
+                renderProducts();
+            }
+        } catch (error) {
+            console.error('Error loading products:', error);
+        }
+    }
+
+    // Initialize data on load
+    loadCategories();
+    loadProducts();
 
     // --- 1. RENDER FUNCTIONS ---
 
@@ -228,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. CRUD ACTIONS ---
 
     // Save (Create / Update)
-    btnSave.addEventListener('click', () => {
+    btnSave.addEventListener('click', async () => {
         // Validasi Sederhana
         if (!inpName.value || !inpPrice.value || !inpCategory.value) {
             Swal.fire('Error', 'Nama, Harga, dan Kategori wajib diisi!', 'error');
@@ -236,40 +219,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const isEdit = inpId.value !== '';
+        const categoryId = categories.find(c => c.name === inpCategory.value)?.id || 1;
+        const isBestSeller = document.querySelector('input[name="isBestSeller"]:checked').value === 'true' ? 1 : 0;
+        
         const productData = {
-            id: isEdit ? parseInt(inpId.value) : Date.now(),
-            name: inpName.value,
-            description: inpDesc.value,
-            price: parseInt(inpPrice.value),
-            category: inpCategory.value,
-            image: currentImageBase64 || (isEdit ? imgPreview.src : 'images/placeholder-product.jpg'),
-            isBestSeller: document.querySelector('input[name="isBestSeller"]:checked').value === 'true',
-            isAvailable: document.querySelector('input[name="isAvailable"]:checked').value === 'true',
-            canFried: document.querySelector('input[name="canFried"]:checked').value === 'true',
-            friedPrice: inpFriedPrice.value ? parseInt(inpFriedPrice.value) : 0
+            nama_produk: inpName.value,
+            deskripsi: inpDesc.value,
+            harga: parseInt(inpPrice.value),
+            id_kategori: categoryId,
+            gambar_utama: currentImageBase64 || (isEdit ? imgPreview.src : 'images/placeholder.jpg'),
+            is_best_seller: isBestSeller,
+            is_aktif: document.querySelector('input[name="isAvailable"]:checked').value === 'true' ? 1 : 0,
+            stok: 100
         };
 
-        if (isEdit) {
-            // Update existing
-            const index = products.findIndex(p => p.id === productData.id);
-            if (index !== -1) products[index] = productData;
-        } else {
-            // Create new
-            products.push(productData);
-        }
+        console.log('Saving product:', productData);
+        console.log('Best Seller checkbox value:', isBestSeller);
 
-        localStorage.setItem('capullet_products', JSON.stringify(products));
-        
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: isEdit ? 'Produk diperbarui.' : 'Produk ditambahkan.',
-            timer: 1500,
-            showConfirmButton: false
-        }).then(() => {
-            hideForm();
-            renderProducts();
-        });
+        try {
+            let url, method;
+            if (isEdit) {
+                productData.id_produk = parseInt(inpId.value);
+                url = 'api/produk/update.php';
+                method = 'POST';
+            } else {
+                url = 'api/produk/create.php';
+                method = 'POST';
+            }
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: isEdit ? 'Produk diperbarui.' : 'Produk ditambahkan.',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    hideForm();
+                    loadProducts(); // Reload from database
+                });
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Gagal menyimpan produk: ' + error.message, 'error');
+        }
     });
 
     // Edit (Dipanggil dari onclick HTML)
@@ -306,20 +311,38 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Delete
-    window.deleteProduct = (id) => {
+    window.deleteProduct = async (id) => {
         Swal.fire({
             title: 'Hapus Produk?',
             text: "Data tidak bisa dikembalikan!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            confirmButtonText: 'Ya, Hapus!'
-        }).then((result) => {
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('capullet_products', JSON.stringify(products));
-                renderProducts();
-                Swal.fire('Terhapus!', 'Produk berhasil dihapus.', 'success');
+                try {
+                    const response = await fetch('api/produk/delete.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id_produk: id })
+                    });
+
+                    const apiResult = await response.json();
+
+                    if (apiResult.success) {
+                        Swal.fire('Terhapus!', 'Produk berhasil dihapus.', 'success');
+                        loadProducts(); // Reload from database
+                    } else {
+                        throw new Error(apiResult.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Gagal menghapus produk', 'error');
+                }
             }
         });
     };
@@ -331,8 +354,4 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', (e) => {
         renderProducts('all', e.target.value);
     });
-
-    // --- INITIALIZE ---
-    renderCategories();
-    renderProducts();
 });

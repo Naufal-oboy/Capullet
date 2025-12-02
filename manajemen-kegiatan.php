@@ -1,3 +1,6 @@
+<?php
+require_once 'includes/auth-check.php';
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,7 +14,7 @@
 <body class="admin-page">
     <header class="admin-header">
         <nav class="container">
-            <a href="dashboard-admin.html" class="logo">
+            <a href="dashboard-admin.php" class="logo">
                 <img src="images/logo.png" alt="Logo Capullet">
             </a>
             <div class="menu-toggle">
@@ -20,13 +23,14 @@
                 <span class="bar-bottom"></span>
             </div>
             <ul>
-                <li><a href="dashboard-admin.html">Dashboard</a></li>
-                <li><a href="manajemen-produk.html">Produk</a></li>
-                <li><a href="manajemen-kategori.html">Kategori</a></li>
-                <li><a href="manajemen-kegiatan.html" class="active">Kegiatan</a></li>
-                <li><a href="manajemen-tentang-kami.html">Tentang Kami</a></li>
-                <li><a href="manajemen-kontak.html">Kontak</a></li>
-                <li><a href="manajemen-faqs.html">FAQs</a></li>
+                <li><a href="dashboard-admin.php">Dashboard</a></li>
+                <li><a href="manajemen-produk.php">Produk</a></li>
+                <li><a href="manajemen-kategori.php">Kategori</a></li>
+                <li><a href="manajemen-penjualan.php">Penjualan</a></li>
+                <li><a href="manajemen-kegiatan.php" class="active">Kegiatan</a></li>
+                <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
+                <li><a href="manajemen-kontak.php">Kontak</a></li>
+                <li><a href="manajemen-faqs.php">FAQs</a></li>
                 <li class="mobile-logout"><a href="#">Logout</a></li>
             </ul>
             <a href="#" class="btn btn-logout desktop-logout">Logout</a>
@@ -97,9 +101,10 @@
     <footer class="admin-footer">
         <p>© 2025 Capullet. All rights reserved.</p>
     </footer>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/global.js"></script>
+    <script src="js/admin/logout.js"></script>
     <script src="js/admin/manajemen-kegiatan.js"></script>
 </body>
 </html>

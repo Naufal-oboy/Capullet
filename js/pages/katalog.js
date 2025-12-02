@@ -1,148 +1,101 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('catalog-container');
+    let products = [];
+    let categories = [];
 
-    const products = [
-        {
-            id: 1,
-            name: "Keripik Mustofa Usus",
-            price: 23000,
-            category: "keripik",
-            image: "images/keripik-mustofa-usus.jpg",
-            description: "Keripik usus renyah dengan bumbu balado khas.",
-            friedPrice: 0,
-            isBestSeller: true 
-        },
-        {
-            id: 2,
-            name: "Keripik Mustofa Kulit",
-            price: 25000,
-            category: "keripik",
-            image: "images/keripik-mustofa-kulit.jpg",
-            description: "Kulit ayam crispy berbalut bumbu mustofa pedas manis.",
-            friedPrice: 0,
-            isBestSeller: true 
-        },
-        {
-            id: 3,
-            name: "American Risol",
-            price: 33000,
-            category: "risol",
-            image: "images/american-risol.jpg",
-            description: "Isian daging asap, telur, dan mayonaise lumer.",
-            friedPrice: 3000,
-            isBestSeller: false
-        },
-        {
-            id: 4,
-            name: "American Mentai",
-            price: 35000,
-            category: "risol",
-            image: "images/american-mentai.jpg",
-            description: "Paduan saus mentai creamy dengan isian american.",
-            friedPrice: 3000,
-            isBestSeller: false
-        },
-        {
-            id: 5,
-            name: "Spicy Chicken Risol",
-            price: 30000,
-            category: "risol",
-            image: "images/spicy-chicken-risol.jpg",
-            description: "Ayam suwir pedas nampol dalam balutan kulit renyah.",
-            friedPrice: 3000,
-            isBestSeller: false
-        },
-        {
-            id: 6,
-            name: "Rougut Risol",
-            price: 20000,
-            category: "risol",
-            image: "images/rougut-risol.jpg",
-            description: "Cita rasa klasik sayuran dan ayam dengan tekstur creamy.",
-            friedPrice: 3000,
-            isBestSeller: false
-        },
-        {
-            id: 7,
-            name: "Jasuke Risol",
-            price: 20000,
-            category: "risol",
-            image: "images/jasuke-risol.jpg",
-            description: "Manis gurih jagung susu keju dalam satu gigitan.",
-            friedPrice: 3000,
-            isBestSeller: false
-        },
-        {
-            id: 8,
-            name: "Chococizz Risol",
-            price: 28000,
-            category: "risol",
-            image: "images/chococizz-risol.jpg",
-            description: "Lumeran coklat premium berpadu dengan keju gurih.",
-            friedPrice: 3000,
-            isBestSeller: false
-        },
-        {
-            id: 9,
-            name: "Lemongrass",
-            price: 7000,
-            category: "minuman",
-            image: "images/lemongrass.jpg",
-            description: "Minuman sereh segar penyejuk dahaga.",
-            friedPrice: 0,
-            isBestSeller: false
-        },
-        {
-            id: 10,
-            name: "Es Nutella",
-            price: 20000,
-            category: "minuman",
-            image: "images/es-nutella.jpg",
-            description: "Manisnya nutella asli disajikan dingin.",
-            friedPrice: 0,
-            isBestSeller: false
-        },
-        {
-            id: 11,
-            name: "Coffee Jelly Dessert",
-            price: 25000,
-            category: "minuman",
-            image: "images/coffee-jelly-dessert.jpg",
-            description: "Dessert kopi dengan jelly kenyal yang nikmat.",
-            friedPrice: 0,
-            isBestSeller: false
-        },
-        {
-            id: 12,
-            name: "Es Yuhuut",
-            price: 12000,
-            category: "minuman",
-            image: "images/es-yahuut.jpg",
-            description: "Kesegaran yogurt buah asli.",
-            friedPrice: 0,
-            isBestSeller: false
-        },
-        {
-            id: 13,
-            name: "Matcha",
-            price: 10000,
-            category: "minuman",
-            image: "images/matcha-cincau.jpg",
-            description: "Teh hijau jepang creamy dengan topping cincau.",
-            friedPrice: 0,
-            isBestSeller: false
-        },
-        {
-            id: 14,
-            name: "Cappucino Cincau",
-            price: 10000,
-            category: "minuman",
-            image: "images/cappuccino-cincau.jpg",
-            description: "Kopi cappuccino klasik dengan cincau segar.",
-            friedPrice: 0,
-            isBestSeller: false
+    // Load data from database
+    async function loadData() {
+        try {
+            // Load products
+            const productsResponse = await fetch('api/get-products.php', {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
+            const productsResult = await productsResponse.json();
+            
+            if (productsResult.success) {
+                products = productsResult.products.map(p => ({
+                    id: parseInt(p.id_produk),
+                    name: p.nama_produk,
+                    price: parseFloat(p.harga),
+                    category: p.kategori_slug || 'uncategorized',
+                    categoryName: p.nama_kategori || 'Lainnya',
+                    image: p.gambar_utama || 'images/placeholder.jpg',
+                    description: p.deskripsi || '',
+                    friedPrice: 0, // Bisa ditambahkan field di database jika perlu
+                    isBestSeller: p.is_best_seller == 1
+                }));
+                console.log('Products loaded:', products);
+                console.log('Best sellers:', products.filter(p => p.isBestSeller));
+            }
+
+            // Load categories
+            const categoriesResponse = await fetch('api/get-categories.php', {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
+            });
+            const categoriesResult = await categoriesResponse.json();
+            
+            if (categoriesResult.success) {
+                categories = categoriesResult.categories;
+                updateFilterButtons();
+            }
+
+            renderProducts();
+            
+        } catch (error) {
+            console.error('Error loading data:', error);
+            // Fallback ke dummy data jika API gagal
+            loadDummyData();
         }
-    ];
+    }
+
+    // Fallback dummy data
+    function loadDummyData() {
+        products = [
+            {
+                id: 1,
+                name: "Keripik Mustofa Usus",
+                price: 23000,
+                category: "keripik",
+                categoryName: "Keripik",
+                image: "images/keripik-mustofa-usus.jpg",
+                description: "Keripik usus renyah dengan bumbu balado khas.",
+                friedPrice: 0,
+                isBestSeller: true 
+            },
+            {
+                id: 2,
+                name: "Keripik Mustofa Kulit",
+                price: 25000,
+                category: "keripik",
+                categoryName: "Keripik",
+                image: "images/keripik-mustofa-kulit.jpg",
+                description: "Kulit ayam crispy berbalut bumbu mustofa pedas manis.",
+                friedPrice: 0,
+                isBestSeller: true 
+            }
+        ];
+        renderProducts();
+    }
+
+    // Update filter buttons based on categories from database
+    function updateFilterButtons() {
+        const filterControls = document.querySelector('.filter-controls');
+        if (!filterControls) return;
+
+        let buttonsHTML = '<button class="active" data-filter="all">Semua</button>';
+        
+        categories.forEach(cat => {
+            buttonsHTML += `<button data-filter="${cat.slug}">${cat.nama_kategori}</button>`;
+        });
+
+        filterControls.innerHTML = buttonsHTML;
+    }
 
     const formatRupiah = (number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -314,8 +267,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const friedPrice = parseInt(card.getAttribute('data-fried-price')) || 0;
                 const price = parseInt(priceText.replace(/[^0-9]/g, ''));
 
+                // Find product ID from products array by name
+                const product = products.find(p => p.name === name);
+                const productId = product ? product.id : 0;
+
                 const productData = {
-                    id: Date.now(),
+                    id: productId,
                     name: name,
                     price: price,
                     image: imageSrc,
@@ -341,5 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    renderProducts();
+    // Load data and render
+    await loadData();
 });

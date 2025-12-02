@@ -325,45 +325,56 @@
     font-size: 1.1rem;
 }
 
-/* Filter Controls (Floating Pill) */
-.filter-controls {
+/* Filter Controls (Styled like katalog.css) */
+.filter-controls-index {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    background-color: var(--white); 
-    padding: 12px 30px; 
-    border-radius: 100px;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 5;
     width: fit-content;
-    max-width: 90%;
-    margin: 3rem auto 4rem auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    flex-wrap: wrap;
+    max-width: 100%;
+    margin: 0 auto 4rem auto;
+    padding: 10px;
+    background-color: var(--white);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-.filter-controls button {
-    padding: 12px 32px;
+.filter-controls-index button {
+    padding: 10px 24px;
     border: none;
     background: transparent;
     border-radius: 50px;
-    color: #888; 
-    font-weight: 700;
+    color: #5A6E84;
     font-size: 1rem;
+    font-weight: 500;
     font-family: var(--font-family);
-    letter-spacing: 0.5px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.filter-controls button:hover {
-    color: var(--primary-color);
+.filter-controls-index button:hover {
     background-color: rgba(141, 215, 255, 0.1);
+    color: var(--primary-color);
 }
 
-.filter-controls button.active {
+.filter-controls-index button.active {
     background-color: var(--primary-color);
     color: var(--white);
     box-shadow: 0 4px 15px rgba(141, 215, 255, 0.4);
+}
+
+/* Category Section */
+.category-section-index {
+    margin-bottom: 3rem;
+    display: none;
+}
+
+.category-section-index.show {
+    display: block;
 }
 
 /* Catalog Grid (Flex Center) */
@@ -880,16 +891,16 @@
     }
 
     /* Filter Responsive */
-    .filter-controls {
-        width: 90%; 
+    .filter-controls-index {
+        width: 90%;
         padding: 8px;
         border-radius: 25px;
     }
 
-    .filter-controls button {
+    .filter-controls-index button {
         flex: 1 1 auto;
-        font-size: 0.9rem;
         padding: 8px 12px;
+        font-size: 0.9rem;
     }
 
     /* Testimonials Mobile (Stack) */

@@ -3,13 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.querySelector('.search-bar input');
     const btnAdd = document.querySelector('.btn-add');
 
-    const defaultCategories = [
-        { id: 1, name: 'Keripik' },
-        { id: 2, name: 'Risol' },
-        { id: 3, name: 'Minuman' }
-    ];
+    let categories = [];
 
-    let categories = JSON.parse(localStorage.getItem('capullet_categories')) || defaultCategories;
+    // Load categories from database
+    async function loadCategories() {
+        try {
+            const response = await fetch('api/get-categories.php');
+            const result = await response.json();
+            if (result.success) {
+                categories = result.categories.map(cat => ({
+                    id: cat.id_kategori,
+                    name: cat.nama_kategori
+                }));
+                renderTable();
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+        }
+    }
 
     function renderTable(data = categories) {
         tableBody.innerHTML = ''; 
@@ -38,9 +49,49 @@ document.addEventListener('DOMContentLoaded', () => {
         attachActionListeners();
     }
 
-    function saveToLocalStorage() {
-        localStorage.setItem('capullet_categories', JSON.stringify(categories));
-        renderTable();
+    async function saveCategory(categoryName) {
+        try {
+            const response = await fetch('api/kategori/create.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nama_kategori: categoryName })
+            });
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('Error saving category:', error);
+            return { success: false, message: 'Terjadi kesalahan' };
+        }
+    }
+
+    async function updateCategory(id, categoryName) {
+        try {
+            const response = await fetch('api/kategori/update.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_kategori: id, nama_kategori: categoryName })
+            });
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('Error updating category:', error);
+            return { success: false, message: 'Terjadi kesalahan' };
+        }
+    }
+
+    async function deleteCategory(id) {
+        try {
+            const response = await fetch('api/kategori/delete.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_kategori: id })
+            });
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            return { success: false, message: 'Terjadi kesalahan' };
+        }
     }
 
     btnAdd.addEventListener('click', async (e) => {
@@ -60,17 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (categoryName) {
-            const newId = Date.now();
-            categories.push({ id: newId, name: categoryName });
-            saveToLocalStorage();
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Kategori berhasil ditambahkan.',
-                timer: 1500,
-                showConfirmButton: false
-            });
+            const result = await saveCategory(categoryName);
+            if (result.success) {
+                await loadCategories();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Kategori berhasil ditambahkan.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire('Error', result.message, 'error');
+            }
         }
     });
 
@@ -95,22 +148,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (newName) {
-                    category.name = newName;
-                    saveToLocalStorage();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Tersimpan!',
-                        text: 'Data berhasil diperbarui',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    const result = await updateCategory(id, newName);
+                    if (result.success) {
+                        await loadCategories();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Tersimpan!',
+                            text: 'Data berhasil diperbarui',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire('Error', result.message, 'error');
+                    }
                 }
             });
         });
 
         const deleteButtons = document.querySelectorAll('.btn-delete');
         deleteButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const id = parseInt(btn.getAttribute('data-id'));
                 
                 Swal.fire({
@@ -121,17 +178,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     confirmButtonText: 'Ya, Hapus!',
                     cancelButtonText: 'Batal',
                     reverseButtons: true
-                }).then((result) => {
+                }).then(async (result) => {
                     if (result.isConfirmed) {
-                        categories = categories.filter(c => c.id !== id);
-                        saveToLocalStorage();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Terhapus!',
-                            text: 'Kategori telah dihapus.',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
+                        const deleteResult = await deleteCategory(id);
+                        if (deleteResult.success) {
+                            await loadCategories();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Terhapus!',
+                                text: 'Kategori telah dihapus.',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire('Error', deleteResult.message, 'error');
+                        }
                     }
                 });
             });
@@ -146,5 +207,5 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTable(filteredCategories);
     });
 
-    renderTable();
+    loadCategories();
 });

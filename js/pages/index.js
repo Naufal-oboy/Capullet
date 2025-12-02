@@ -82,42 +82,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* =========================================
-       2. FILTER KATALOG BERANDA
+       2. FILTER KATALOG BERANDA (INDEX)
        ========================================= */
-    const filterButtons = document.querySelectorAll('.filter-controls button');
-    const productCards = document.querySelectorAll('.catalog-section .product-card');
+    const filterButtonsIndex = document.querySelectorAll('.filter-controls-index button');
+    const categorySections = document.querySelectorAll('.category-section-index');
 
-    function applyFilter(filterValue, isInitialLoad = false) {
-        productCards.forEach(card => {
-            const category = card.getAttribute('data-category');
-            if (filterValue === 'semua' || category === filterValue) {
-                card.style.display = 'flex';
-                if (isInitialLoad) {
-                    card.style.opacity = '1';
-                } else {
-                    setTimeout(() => card.style.opacity = '1', 50);
-                }
+    function applyFilterIndex(filterValue) {
+        categorySections.forEach(section => {
+            const category = section.getAttribute('data-category');
+            if (category === filterValue) {
+                section.classList.add('show');
             } else {
-                card.style.display = 'none';
-                card.style.opacity = '0';
+                section.classList.remove('show');
             }
         });
     }
 
-    if (filterButtons.length > 0) {
-        filterButtons.forEach(btn => {
+    if (filterButtonsIndex.length > 0) {
+        // Show first category by default
+        const firstCategory = filterButtonsIndex[0].getAttribute('data-category');
+        filterButtonsIndex[0].classList.add('active');
+        applyFilterIndex(firstCategory);
+
+        filterButtonsIndex.forEach(btn => {
             btn.addEventListener('click', () => {
-                filterButtons.forEach(b => b.classList.remove('active'));
+                filterButtonsIndex.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                const filterValue = btn.textContent.toLowerCase().trim();
-                applyFilter(filterValue);
+                const filterValue = btn.getAttribute('data-category');
+                applyFilterIndex(filterValue);
             });
         });
-
-        const activeBtn = document.querySelector('.filter-controls button.active');
-        if (activeBtn) {
-            applyFilter(activeBtn.textContent.toLowerCase().trim(), true);
-        }
     }
 
 
@@ -191,38 +185,76 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================================
        4. FAQ ACCORDION
        ========================================= */
-    const faqDetails = document.querySelectorAll('.faq-item');
-    if (faqDetails.length > 0) {
-        faqDetails.forEach((targetDetail) => {
-            const summary = targetDetail.querySelector('summary');
-            const answer = targetDetail.querySelector('.answer');
-            summary.addEventListener('click', (e) => {
+    async function loadFaqs() {
+        const container = document.getElementById('faq-container');
+        if (!container) return;
+        try {
+            const response = await fetch('api/get-faqs.php', { cache: 'no-store' });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.message || 'Gagal memuat FAQ');
+
+            if (!result.faqs || result.faqs.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#888;">Belum ada FAQ aktif.</div>';
+                return;
+            }
+
+            const html = result.faqs.map(f => `
+                <details class="faq-item">
+                    <summary>${escapeHtml(f.pertanyaan)}</summary>
+                    <div class="answer"><div class="answer-content">${escapeHtml(f.jawaban)}</div></div>
+                </details>
+            `).join('');
+            container.innerHTML = html;
+            initFaqAccordion();
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#c00;">Terjadi kesalahan memuat FAQ.</div>';
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function initFaqAccordion() {
+        const faqDetails = document.querySelectorAll('.faq-item');
+        faqDetails.forEach(detail => {
+            const summary = detail.querySelector('summary');
+            const answer = detail.querySelector('.answer');
+            summary.addEventListener('click', e => {
                 e.preventDefault();
-                const isOpen = targetDetail.hasAttribute('open');
+                const isOpen = detail.hasAttribute('open');
                 if (isOpen) {
                     answer.style.gridTemplateRows = '0fr';
                     answer.style.opacity = '0';
                     setTimeout(() => {
-                        targetDetail.removeAttribute('open');
+                        detail.removeAttribute('open');
                         answer.style.removeProperty('grid-template-rows');
                         answer.style.removeProperty('opacity');
-                    }, 500);
+                    }, 400);
                 } else {
-                    faqDetails.forEach((otherDetail) => {
-                        if (otherDetail !== targetDetail && otherDetail.hasAttribute('open')) {
-                            const otherAnswer = otherDetail.querySelector('.answer');
+                    faqDetails.forEach(other => {
+                        if (other !== detail && other.hasAttribute('open')) {
+                            const otherAnswer = other.querySelector('.answer');
                             otherAnswer.style.gridTemplateRows = '0fr';
                             otherAnswer.style.opacity = '0';
                             setTimeout(() => {
-                                otherDetail.removeAttribute('open');
+                                other.removeAttribute('open');
                                 otherAnswer.style.removeProperty('grid-template-rows');
                                 otherAnswer.style.removeProperty('opacity');
-                            }, 500);
+                            }, 400);
                         }
                     });
-                    targetDetail.setAttribute('open', '');
+                    detail.setAttribute('open', '');
                 }
             });
         });
     }
+
+    loadFaqs();
 });

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const usernameVal = document.getElementById('username').value;
         const passwordVal = document.getElementById('password').value;
-        const captchaVal = captchaInput.value;
+        const captchaVal = captchaInput.value.toUpperCase();
 
         if (captchaVal !== currentCaptcha) {
             showError('Kode CAPTCHA salah! Silakan coba lagi.');
@@ -41,14 +41,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (usernameVal === 'admin' && passwordVal === 'admin') {
-            alert('Login Berhasil! Mengalihkan...');
-            window.location.href = '/dashboard-admin.html';
-        } else {
-            showError('Nama pengguna atau kata sandi salah!');
+        // Use API for login
+        fetch('api/auth/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: usernameVal,
+                password: passwordVal
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                window.location.href = 'dashboard-admin.php';
+            } else {
+                showError(result.message || 'Login gagal!');
+                generateCaptcha();
+                document.getElementById('password').value = '';
+            }
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            showError('Terjadi kesalahan. Silakan coba lagi.');
             generateCaptcha();
-            document.getElementById('password').value = '';
-        }
+        });
     };
 
     const showError = (msg) => {
