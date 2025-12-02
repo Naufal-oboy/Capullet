@@ -1,22 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navList = document.querySelector('header nav ul');
-
-    if (menuToggle && navList) {
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            navList.classList.toggle('slide');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!menuToggle.contains(e.target) && !navList.contains(e.target)) {
-                menuToggle.classList.remove('active');
-                navList.classList.remove('slide');
-            }
-        });
-    }
-});
-
+/* =========================================
+   GLOBAL CART FUNCTION
+   ========================================= */
 window.updateCartCount = () => {
     const cart = JSON.parse(localStorage.getItem('capullet_cart')) || [];
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -42,32 +26,48 @@ window.updateCartCount = () => {
     }
 };
 
+/* =========================================
+   DOM CONTENT LOADED
+   ========================================= */
 document.addEventListener('DOMContentLoaded', () => {
     
-    /* =========================================
-       2. INITIALIZE CART BADGE (ON LOAD)
-       ========================================= */
-    // Jalankan fungsi ini setiap kali halaman apapun dibuka
+    /* 1. INITIALIZE CART BADGE (ON LOAD) */
     window.updateCartCount();
 
-    /* =========================================
-       3. HAMBURGER MENU LOGIC
-       ========================================= */
+    /* 2. HAMBURGER MENU LOGIC */
     const menuToggle = document.querySelector('.menu-toggle');
     const navList = document.querySelector('header nav ul');
 
     if (menuToggle && navList) {
-        menuToggle.addEventListener('click', () => {
+        // Toggle menu on hamburger click (support both click and touch)
+        const toggleMenu = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             menuToggle.classList.toggle('active'); 
             navList.classList.toggle('slide');
-        });
+        };
 
-        // Tutup menu jika klik di luar
-        document.addEventListener('click', (e) => {
+        menuToggle.addEventListener('click', toggleMenu);
+        menuToggle.addEventListener('touchstart', toggleMenu, { passive: false });
+
+        // Close menu when clicking outside
+        const closeMenu = (e) => {
             if (!menuToggle.contains(e.target) && !navList.contains(e.target)) {
                 menuToggle.classList.remove('active');
                 navList.classList.remove('slide');
             }
+        };
+
+        document.addEventListener('click', closeMenu);
+        document.addEventListener('touchstart', closeMenu);
+
+        // Close menu when clicking on a menu link
+        const menuLinks = navList.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navList.classList.remove('slide');
+            });
         });
     }
 });

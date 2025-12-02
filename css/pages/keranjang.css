@@ -271,7 +271,7 @@
     padding: 14px;
     font-size: 1rem;
     background-color: var(--primary-color);
-    color: white;
+    color: #000;
     border-radius: 8px;
     box-shadow: 0 6px 15px rgba(141, 215, 255, 0.6);
     border: none;
@@ -279,6 +279,7 @@
 
 .btn-send-whatsapp:hover {
     background-color: var(--hover-color);
+    color: #000;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(238, 3, 132, 0.4);
 }

@@ -5,6 +5,25 @@ require_once 'api/config/database.php';
 $db = Database::getInstance();
 $pdo = $db->getConnection();
 
+// Get website settings
+try {
+    $stmtSettings = $pdo->query("SELECT * FROM website_settings LIMIT 1");
+    $settings = $stmtSettings->fetch();
+} catch (PDOException $e) {
+    // Default values if table doesn't exist
+    $settings = [
+        'logo' => 'images/logo.png',
+        'hero_image' => 'images/hero-image.jpg',
+        'hero_subtitle' => 'Capullet Pangan Lumintu',
+        'hero_title' => 'A TASTE TO\nREMEMBER.',
+        'hero_button_text' => 'Jelajahi Rasa',
+        'about_image' => 'images/about-home.png',
+        'about_tag' => 'Sekilas Tentang Kami',
+        'about_title' => 'Cita Rasa Otentik,\nDibuat dengan Hati.',
+        'about_description' => 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food.'
+    ];
+}
+
 $stmtBestSeller = $pdo->query("
     SELECT p.*, k.nama_kategori 
     FROM produk p 
@@ -72,7 +91,7 @@ $highlightProduct = $stmtHighlight->fetch();
     <header>
         <nav class="container">
             <a href="index.php" class="logo">
-                <img src="images/logo.png" alt="Logo Capullet">
+                <img src="<?= htmlspecialchars($settings['logo'] ?? 'images/logo.png') ?>" alt="Logo Capullet">
             </a>
             
             <!-- Hamburger Menu (Mobile) -->
@@ -99,23 +118,23 @@ $highlightProduct = $stmtHighlight->fetch();
 
     <main>
         <!-- 1. HERO SECTION (Full Screen) -->
-        <section class="hero-section">
+        <section class="hero-section" style="background: url('<?= htmlspecialchars($settings['hero_image'] ?? 'images/hero-image.jpg') ?>') no-repeat center center/cover;">
                 <div class="hero-overlay"></div>
             <div class="container hero-content">
-                <p class="subtitle">Capullet Pangan Lumintu</p>
-                <h1>A TASTE TO<br>REMEMBER.</h1>
-                <a href="katalog.php" class="btn btn-primary btn-lg">Jelajahi Rasa</a>
+                <p class="subtitle"><?= htmlspecialchars($settings['hero_subtitle'] ?? 'Capullet Pangan Lumintu') ?></p>
+                <h1><?= nl2br(htmlspecialchars($settings['hero_title'] ?? 'A TASTE TO\nREMEMBER.')) ?></h1>
+                <a href="katalog.php" class="btn btn-primary btn-lg"><?= htmlspecialchars($settings['hero_button_text'] ?? 'Jelajahi Rasa') ?></a>
             </div>
         </section>
 
         <!-- 2. ABOUT US (Full Background) -->
-        <section class="about-section">
+        <section class="about-section" style="background: url('<?= htmlspecialchars($settings['about_image'] ?? 'images/about-home.png') ?>') no-repeat center center/cover;">
             <div class="about-overlay"></div>
             <div class="container about-content">
                 <div class="about-text">
-                    <span class="section-tag"><i class="fas fa-leaf"></i> Sekilas Tentang Kami</span>
-                    <h2>Cita Rasa Otentik,<br>Dibuat dengan Hati.</h2>
-                    <p>Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.</p>
+                    <span class="section-tag"><i class="fas fa-leaf"></i> <?= htmlspecialchars($settings['about_tag'] ?? 'Sekilas Tentang Kami') ?></span>
+                    <h2><?= nl2br(htmlspecialchars($settings['about_title'] ?? 'Cita Rasa Otentik,\nDibuat dengan Hati.')) ?></h2>
+                    <p><?= htmlspecialchars($settings['about_description'] ?? 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.') ?></p>
                     
                     <div class="about-stats">
                         <div class="stat-item"><i class="fas fa-check-circle"></i><span>100% Halal</span></div>

@@ -32,7 +32,7 @@ require_once 'includes/auth-check.php';
                 <li><a href="manajemen-kegiatan.php">Kegiatan</a></li>
                 <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
                 <li><a href="manajemen-kontak.php">Kontak</a></li>
-                <li><a href="manajemen-faqs.php">FAQs</a></li>
+                <li><a href="manajemen-pengaturan.php">Pengaturan</a></li>
                 <li class="mobile-logout"><a href="#">Logout</a></li>
             </ul>
 
@@ -53,7 +53,7 @@ require_once 'includes/auth-check.php';
              <a href="manajemen-kegiatan.php" class="dashboard-link-card">Manajemen Kegiatan</a>
              <a href="manajemen-tentang-kami.php" class="dashboard-link-card">Manajemen Tentang Kami</a>
              <a href="manajemen-kontak.php" class="dashboard-link-card">Manajemen Kontak</a>
-             <a href="manajemen-faqs.php" class="dashboard-link-card">Manajemen FAQS</a>
+             <a href="manajemen-pengaturan.php" class="dashboard-link-card">Manajemen Pengaturan</a>
         </section>
     </main>
 

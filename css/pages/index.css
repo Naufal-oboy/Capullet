@@ -379,16 +379,17 @@
 
 /* Catalog Grid (Flex Center) */
 .catalog-section .product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Product Card (Premium - Vertical, Hover Zoom) */
 .catalog-section .product-card {
     background: var(--white);
-    width: 320px;
+    width: 100%;
     min-height: 520px;
     border-radius: 24px;
     border: none; 
@@ -936,10 +937,30 @@
     }
 
     .slider-controls { display: none; }
+
+    /* Catalog Section Mobile */
+    .catalog-section .product-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .catalog-section .product-card {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .catalog-section .product-card img {
+        height: 250px;
+    }
 }
 
 @media (max-width: 480px) {
     .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .catalog-section .product-grid {
         grid-template-columns: 1fr;
     }
 

@@ -31,7 +31,7 @@ require_once 'includes/auth-check.php';
                 <li><a href="manajemen-kegiatan.php">Kegiatan</a></li>
                 <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
                 <li><a href="manajemen-kontak.php" class="active">Kontak</a></li>
-                <li><a href="manajemen-faqs.php">FAQs</a></li>
+                <li><a href="manajemen-pengaturan.php">Pengaturan</a></li>
                 <li class="mobile-logout"><a href="#">Logout</a></li>
             </ul>
 

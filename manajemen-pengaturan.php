@@ -11,13 +11,30 @@ try {
     $stmt = $pdo->query("SELECT * FROM website_settings LIMIT 1");
     $settings = $stmt->fetch();
     
+    // Check if footer columns exist, if not add them
+    try {
+        $pdo->query("SELECT footer_description FROM website_settings LIMIT 1");
+    } catch (PDOException $e) {
+        // Add footer columns
+        $pdo->exec("ALTER TABLE website_settings 
+            ADD COLUMN footer_description TEXT AFTER about_description,
+            ADD COLUMN footer_address TEXT AFTER footer_description,
+            ADD COLUMN footer_phone VARCHAR(50) DEFAULT '+62 812-3456-7890' AFTER footer_address,
+            ADD COLUMN footer_email VARCHAR(100) DEFAULT 'info@capullet.com' AFTER footer_phone
+        ");
+        
+        // Reload settings after adding columns
+        $stmt = $pdo->query("SELECT * FROM website_settings LIMIT 1");
+        $settings = $stmt->fetch();
+    }
+    
     // If no data, insert default OR update if data exists but empty
     if (!$settings) {
         $pdo->exec("
             INSERT INTO website_settings 
-            (id, logo, hero_image, hero_subtitle, hero_title, hero_button_text, about_image, about_tag, about_title, about_description, stat_products, stat_customers, stat_experience) 
+            (id, logo, hero_image, hero_subtitle, hero_title, hero_button_text, about_image, about_tag, about_title, about_description, footer_description, footer_address, footer_phone, footer_email, stat_products, stat_customers, stat_experience) 
             VALUES 
-            (1, 'images/logo.png', 'images/hero-image.jpg', 'Capullet Pangan Lumintu', 'A TASTE TO\nREMEMBER.', 'Jelajahi Rasa', 'images/about-home.png', 'Sekilas Tentang Kami', 'Cita Rasa Otentik,\nDibuat dengan Hati.', 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.', 50, 1000, 5)
+            (1, 'images/logo.png', 'images/hero-image.jpg', 'Capullet Pangan Lumintu', 'A TASTE TO\nREMEMBER.', 'Jelajahi Rasa', 'images/about-home.png', 'Sekilas Tentang Kami', 'Cita Rasa Otentik,\nDibuat dengan Hati.', 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.', 'Capullet adalah produsen keripik dan frozen food berkualitas dengan rasa yang otentik dan lezat.', 'Jl. Contoh No. 123, Jakarta, Indonesia', '+62 812-3456-7890', 'info@capullet.com', 50, 1000, 5)
         ");
         $stmt = $pdo->query("SELECT * FROM website_settings LIMIT 1");
         $settings = $stmt->fetch();
@@ -34,6 +51,10 @@ try {
             about_tag = COALESCE(NULLIF(about_tag, ''), 'Sekilas Tentang Kami'),
             about_title = COALESCE(NULLIF(about_title, ''), 'Cita Rasa Otentik,\nDibuat dengan Hati.'),
             about_description = COALESCE(NULLIF(about_description, ''), 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.'),
+            footer_description = COALESCE(NULLIF(footer_description, ''), 'Capullet adalah produsen keripik dan frozen food berkualitas dengan rasa yang otentik dan lezat.'),
+            footer_address = COALESCE(NULLIF(footer_address, ''), 'Jl. Contoh No. 123, Jakarta, Indonesia'),
+            footer_phone = COALESCE(NULLIF(footer_phone, ''), '+62 812-3456-7890'),
+            footer_email = COALESCE(NULLIF(footer_email, ''), 'info@capullet.com'),
             stat_products = COALESCE(NULLIF(stat_products, 0), 50),
             stat_customers = COALESCE(NULLIF(stat_customers, 0), 1000),
             stat_experience = COALESCE(NULLIF(stat_experience, 0), 5)
@@ -56,6 +77,10 @@ try {
           `about_tag` varchar(255) DEFAULT 'Sekilas Tentang Kami',
           `about_title` text,
           `about_description` text,
+          `footer_description` text,
+          `footer_address` text,
+          `footer_phone` varchar(50) DEFAULT '+62 812-3456-7890',
+          `footer_email` varchar(100) DEFAULT 'info@capullet.com',
           `stat_products` int(11) DEFAULT 50,
           `stat_customers` int(11) DEFAULT 1000,
           `stat_experience` int(11) DEFAULT 5,
@@ -67,9 +92,9 @@ try {
     // Insert default data with all values
     $pdo->exec("
         INSERT INTO website_settings 
-        (id, logo, hero_image, hero_subtitle, hero_title, hero_button_text, about_image, about_tag, about_title, about_description, stat_products, stat_customers, stat_experience) 
+        (id, logo, hero_image, hero_subtitle, hero_title, hero_button_text, about_image, about_tag, about_title, about_description, footer_description, footer_address, footer_phone, footer_email, stat_products, stat_customers, stat_experience) 
         VALUES 
-        (1, 'images/logo.png', 'images/hero-image.jpg', 'Capullet Pangan Lumintu', 'A TASTE TO\nREMEMBER.', 'Jelajahi Rasa', 'images/about-home.png', 'Sekilas Tentang Kami', 'Cita Rasa Otentik,\nDibuat dengan Hati.', 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.', 50, 1000, 5)
+        (1, 'images/logo.png', 'images/hero-image.jpg', 'Capullet Pangan Lumintu', 'A TASTE TO\nREMEMBER.', 'Jelajahi Rasa', 'images/about-home.png', 'Sekilas Tentang Kami', 'Cita Rasa Otentik,\nDibuat dengan Hati.', 'Berawal dari kecintaan pada rasa, Capullet menghadirkan berbagai olahan keripik dan frozen food. Kami tidak sekadar menjual makanan, tapi menyajikan pengalaman rasa yang renyah, lezat, dan selalu segar untuk menemani setiap momen spesial Anda.', 'Capullet adalah produsen keripik dan frozen food berkualitas dengan rasa yang otentik dan lezat.', 'Jl. Contoh No. 123, Jakarta, Indonesia', '+62 812-3456-7890', 'info@capullet.com', 50, 1000, 5)
     ");
     
     $stmt = $pdo->query("SELECT * FROM website_settings LIMIT 1");
@@ -84,6 +109,7 @@ try {
     <title>Manajemen Pengaturan - Capullet</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/admin/manajemen-kategori.css">
+    <link rel="stylesheet" href="css/admin/manajemen-faqs.css">
     <link rel="stylesheet" href="css/admin/manajemen-pengaturan.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -119,73 +145,67 @@ try {
     <main class="admin-main container">
         <h1 class="admin-page-title">MANAJEMEN PENGATURAN</h1>
 
-        <!-- TAB NAVIGATION -->
-        <div class="tab-navigation">
-            <button class="tab-btn active" data-tab="faqs"><i class="fas fa-question-circle"></i> FAQs</button>
-            <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Pengaturan Website</button>
-        </div>
-
-        <!-- TAB 1: FAQS -->
-        <div class="tab-content active" id="faqs-tab">
-            <div class="management-container" id="faq-list-view">
-                <div class="management-header">
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Cari Pertanyaan...">
-                    </div>
-                    <button class="btn-add" id="btnShowAddForm"><i class="fas fa-plus"></i> Tambah FAQs</button>
+        <!-- SECTION FAQs -->
+        <div class="management-container" id="faq-list-view">
+            <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;"><i class="fas fa-question-circle"></i> Frequently Asked Questions (FAQs)</h2>
+            <div class="management-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari Pertanyaan...">
                 </div>
-
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;">#</th>
-                                <th style="width: 30%;">Pertanyaan</th>
-                                <th>Jawaban</th>
-                                <th style="width: 120px; text-align: right;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="faqTableBody">
-                            <!-- Data akan di-render via JS -->
-                        </tbody>
-                    </table>
-                </div>
+                <button class="btn-add" id="btnShowAddForm"><i class="fas fa-plus"></i> Tambah FAQs</button>
             </div>
 
-            <!-- VIEW 2: FORM TAMBAH/EDIT (Hidden) -->
-            <div class="management-container hidden" id="faq-form-view">
-                <h2 id="formTitle" style="margin-bottom: 1.5rem; color: var(--secondary-color);">Tambah Pertanyaan Baru</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="width: 30%;">Pertanyaan</th>
+                            <th>Jawaban</th>
+                            <th style="width: 120px; text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="faqTableBody">
+                        <!-- Data akan di-render via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- VIEW 2: FORM TAMBAH/EDIT (Hidden) -->
+        <div class="management-container hidden" id="faq-form-view">
+            <h2 id="formTitle" style="margin-bottom: 1.5rem; color: var(--secondary-color);">Tambah Pertanyaan Baru</h2>
+            
+            <div class="faq-form">
+                <input type="hidden" id="faqId">
                 
-                <div class="faq-form">
-                    <input type="hidden" id="faqId">
-                    
-                    <div class="form-group">
-                        <label for="faqQuestion">Pertanyaan</label>
-                        <input type="text" id="faqQuestion" placeholder="Masukkan pertanyaan yang sering diajukan">
-                    </div>
+                <div class="form-group">
+                    <label for="faqQuestion">Pertanyaan</label>
+                    <input type="text" id="faqQuestion" placeholder="Masukkan pertanyaan yang sering diajukan">
+                </div>
 
-                    <div class="form-group">
-                        <label for="faqAnswer">Jawaban</label>
-                        <textarea id="faqAnswer" rows="5" placeholder="Tuliskan jawaban lengkap di sini..."></textarea>
-                    </div>
+                <div class="form-group">
+                    <label for="faqAnswer">Jawaban</label>
+                    <textarea id="faqAnswer" rows="5" placeholder="Tuliskan jawaban lengkap di sini..."></textarea>
+                </div>
 
-                    <div class="form-actions-buttons">
-                        <button class="btn-edit" id="btnCancelForm">
-                            <i class="fas fa-undo"></i> Batal
-                        </button>
-                        <button class="btn-add" id="btnSaveFaq">
-                            <i class="fas fa-save"></i> Simpan
-                        </button>
-                    </div>
+                <div class="form-actions-buttons">
+                    <button class="btn-edit" id="btnCancelForm">
+                        <i class="fas fa-undo"></i> Batal
+                    </button>
+                    <button class="btn-add" id="btnSaveFaq">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 2: PENGATURAN WEBSITE -->
-        <div class="tab-content" id="settings-tab">
-            <div class="settings-container">
-                <!-- Logo Section -->
+        <!-- SECTION PENGATURAN WEBSITE -->
+        <div class="settings-container" style="margin-top: 3rem;">
+            <h2 style="color: var(--secondary-color); margin-bottom: 2rem; font-size: 1.8rem;"><i class="fas fa-cog"></i> Pengaturan Website</h2>
+            
+            <!-- Logo Section -->
                 <div class="settings-section">
                     <h2><i class="fas fa-image"></i> Logo Website</h2>
                     <div class="form-group">
