@@ -4,6 +4,8 @@ let products = [];
 
 let editingOrderId = null;
 let itemCounter = 0;
+let currentPage = 1;
+let totalPages = 1;
 
 // Load products from database
 async function loadProducts() {
@@ -38,9 +40,9 @@ async function loadProducts() {
 }
 
 // Load orders from database
-async function loadOrders() {
+async function loadOrders(page = 1) {
     try {
-        const response = await fetch('api/get-orders.php');
+        const response = await fetch(`api/get-orders.php?page=${page}&limit=10`);
         const result = await response.json();
         
         if (result.success) {
@@ -68,15 +70,21 @@ async function loadOrders() {
                 notes: order.notes || ''
             }));
             
+            // Update pagination info
+            if (result.pagination) {
+                currentPage = result.pagination.current_page;
+                totalPages = result.pagination.total_pages;
+            }
+            
             renderOrders();
+            renderPagination();
         } else {
             console.error('Failed to load orders:', result.message);
             Swal.fire('Error', 'Gagal memuat data pesanan', 'error');
         }
     } catch (error) {
         console.error('Error loading orders:', error);
-        // Jika gagal load, gunakan data dummy untuk demo
-        loadDummyData();
+        Swal.fire('Error', 'Gagal memuat data pesanan', 'error');
     }
 }
 
@@ -139,23 +147,22 @@ function getStatusLabel(status) {
     return labels[status] || status;
 }
 
-// Update statistics
-function updateStats() {
-    const totalOrders = orders.length;
-    const pendingOrders = orders.filter(o => o.status === 'pending').length;
-    const processingOrders = orders.filter(o => o.status === 'processing' || o.status === 'confirmed' || o.status === 'shipped').length;
-    const totalRevenue = orders
-        .filter(o => o.status !== 'cancelled')
-        .reduce((sum, o) => sum + o.totalAmount, 0);
-
-    document.getElementById('total-orders').textContent = totalOrders;
-    document.getElementById('pending-orders').textContent = pendingOrders;
-    document.getElementById('processing-orders').textContent = processingOrders;
-    document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
-
-    // Update charts whenever stats are recalculated
-    renderSalesTrendChart();
-    renderOrderStatusChart();
+// Update statistics - fetch ALL data from API, not just current page
+async function updateStats() {
+    try {
+        const response = await fetch('api/get-stats.php');
+        const result = await response.json();
+        
+        if (result.success) {
+            const stats = result.stats;
+            document.getElementById('total-orders').textContent = stats.totalOrders;
+            document.getElementById('pending-orders').textContent = stats.pendingOrders;
+            document.getElementById('processing-orders').textContent = stats.processingOrders;
+            document.getElementById('total-revenue').textContent = formatCurrency(stats.totalRevenue);
+        }
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
 }
 
 // ==========================
@@ -208,128 +215,156 @@ function normalizeDateKey(value) {
     return `${yyyy}-${mm}-${dd}`;
 }
 
-function renderSalesTrendChart() {
+async function renderSalesTrendChart() {
     const canvas = document.getElementById('salesTrendChart');
     if (!canvas || typeof Chart === 'undefined') return;
 
-    const dayBuckets = getLastNDates(7);
-    // Hitung total pendapatan per hari (exclude cancelled)
-    const dailyRevenue = dayBuckets.map(dk => {
-        return orders
-            .filter(o => (o.status !== 'cancelled') && normalizeDateKey(o.date) === dk.key)
-            .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-    });
+    // Fetch ALL orders for accurate chart data
+    try {
+        const response = await fetch('api/get-orders.php?limit=1000');
+        const result = await response.json();
+        if (!result.success) return;
+        
+        const allOrders = result.orders.map(order => ({
+            date: order.date,
+            totalAmount: parseFloat(order.total_amount),
+            status: order.status
+        }));
+        
+        const dayBuckets = getLastNDates(7);
+        // Hitung total pendapatan per hari (exclude cancelled)
+        const dailyRevenue = dayBuckets.map(dk => {
+            return allOrders
+                .filter(o => (o.status !== 'cancelled') && normalizeDateKey(o.date) === dk.key)
+                .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+        });
 
-    const ctx = canvas.getContext('2d');
-    if (salesTrendChartInstance) salesTrendChartInstance.destroy();
+        const ctx = canvas.getContext('2d');
+        if (salesTrendChartInstance) salesTrendChartInstance.destroy();
 
-    salesTrendChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dayBuckets.map(d => d.label),
-            datasets: [{
-                label: 'Pendapatan Harian',
-                data: dailyRevenue,
-                borderColor: '#66b5ff',
-                backgroundColor: 'rgba(102, 181, 255, 0.15)',
-                fill: true,
-                tension: 0.35,
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: '#66b5ff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            // Format singkat (contoh: 150000 -> 150k)
-                            if (value >= 1000000) return (value/1000000).toFixed(1)+'M';
-                            if (value >= 1000) return (value/1000).toFixed(0)+'k';
-                            return value;
+        salesTrendChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dayBuckets.map(d => d.label),
+                datasets: [{
+                    label: 'Pendapatan Harian',
+                    data: dailyRevenue,
+                    borderColor: '#66b5ff',
+                    backgroundColor: 'rgba(102, 181, 255, 0.15)',
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#66b5ff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                // Format singkat (contoh: 150000 -> 150k)
+                                if (value >= 1000000) return (value/1000000).toFixed(1)+'M';
+                                if (value >= 1000) return (value/1000).toFixed(0)+'k';
+                                return value;
+                            }
                         }
                     }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            const val = ctx.parsed.y || 0;
-                            return 'Rp ' + val.toLocaleString('id-ID');
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const val = ctx.parsed.y || 0;
+                                return 'Rp ' + val.toLocaleString('id-ID');
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error('Error rendering sales trend chart:', error);
+    }
 }
 
-function renderOrderStatusChart() {
+async function renderOrderStatusChart() {
     const canvas = document.getElementById('orderStatusChart');
     if (!canvas || typeof Chart === 'undefined') return;
 
-    const statuses = ['pending', 'confirmed', 'processing', 'shipped', 'completed', 'cancelled'];
-    const labels = ['Pending', 'Terkonfirmasi', 'Diproses', 'Dikirim', 'Selesai', 'Dibatalkan'];
-    // Distinct color palette (no overlapping greens)
-    // Gunakan warna yang konsisten dengan badge status (text color sebagai border, badge background sebagai fill)
-    // Kembalikan ke palet pastel yang selaras dengan badge status
-    const colors = [
-        '#e06d00', // Pending (sedikit lebih gelap dari F57C00)
-        '#1565C0', // Confirmed (lebih pekat)
-        '#2E7D32', // Processing
-        '#6A1B9A', // Shipped
-        '#1B5E20', // Completed (lebih gelap hijau)
-        '#B71C1C'  // Cancelled
-    ];
-    // Sedikit lebih gelap dari versi pastel sebelumnya untuk kontras lebih baik
-    const bgColors = [
-        '#FFE0BF', // Pending (darker than FFF3E0)
-        '#D6E9FB', // Confirmed
-        '#D1E9D4', // Processing
-        '#E9D7F1', // Shipped
-        '#C5E6CA', // Completed
-        '#FFDBD7'  // Cancelled
-    ];
+    // Fetch ALL orders for accurate chart data
+    try {
+        const response = await fetch('api/get-orders.php?limit=1000');
+        const result = await response.json();
+        if (!result.success) return;
+        
+        const allOrders = result.orders.map(order => ({
+            status: order.status
+        }));
+        
+        const statuses = ['pending', 'confirmed', 'processing', 'shipped', 'completed', 'cancelled'];
+        const labels = ['Pending', 'Terkonfirmasi', 'Diproses', 'Dikirim', 'Selesai', 'Dibatalkan'];
+        // Distinct color palette (no overlapping greens)
+        // Gunakan warna yang konsisten dengan badge status (text color sebagai border, badge background sebagai fill)
+        // Kembalikan ke palet pastel yang selaras dengan badge status
+        const colors = [
+            '#e06d00', // Pending (sedikit lebih gelap dari F57C00)
+            '#1565C0', // Confirmed (lebih pekat)
+            '#2E7D32', // Processing
+            '#6A1B9A', // Shipped
+            '#1B5E20', // Completed (lebih gelap hijau)
+            '#B71C1C'  // Cancelled
+        ];
+        // Sedikit lebih gelap dari versi pastel sebelumnya untuk kontras lebih baik
+        const bgColors = [
+            '#FFE0BF', // Pending (darker than FFF3E0)
+            '#D6E9FB', // Confirmed
+            '#D1E9D4', // Processing
+            '#E9D7F1', // Shipped
+            '#C5E6CA', // Completed
+            '#FFDBD7'  // Cancelled
+        ];
 
-    const counts = statuses.map(s => orders.filter(o => (o.status || '').toLowerCase() === s).length);
-    const total = counts.reduce((a, b) => a + b, 0);
-    // Avoid Chart.js zero-sum doughnut (renders nothing)
-    const datasetData = total === 0 ? [1, 0, 0, 0, 0, 0] : counts;
+        const counts = statuses.map(s => allOrders.filter(o => (o.status || '').toLowerCase() === s).length);
+        const total = counts.reduce((a, b) => a + b, 0);
+        // Avoid Chart.js zero-sum doughnut (renders nothing)
+        const datasetData = total === 0 ? [1, 0, 0, 0, 0, 0] : counts;
 
-    const ctx = canvas.getContext('2d');
-    if (orderStatusChartInstance) orderStatusChartInstance.destroy();
+        const ctx = canvas.getContext('2d');
+        if (orderStatusChartInstance) orderStatusChartInstance.destroy();
 
-    orderStatusChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels,
-            datasets: [{
-                data: datasetData,
-                backgroundColor: bgColors,
-                borderColor: colors,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        boxWidth: 14,
-                        usePointStyle: true
+        orderStatusChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: datasetData,
+                    backgroundColor: bgColors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 14,
+                            usePointStyle: true
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error('Error rendering order status chart:', error);
+    }
 }
 
 // Render orders table
@@ -778,8 +813,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Load products first
     await loadProducts();
     
-    // Load orders from database
-    loadOrders();
+    // Load orders and update stats/charts
+    await loadOrders();
+    await updateStats();
+    await renderSalesTrendChart();
+    await renderOrderStatusChart();
 
     // Search and filter
     document.getElementById('search-order').addEventListener('input', filterOrders);
@@ -822,3 +860,69 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 });
+
+// Render Pagination
+function renderPagination() {
+    const paginationContainer = document.getElementById('pagination-container');
+    
+    if (!paginationContainer || totalPages <= 1) {
+        if (paginationContainer) paginationContainer.innerHTML = '';
+        return;
+    }
+
+    let paginationHTML = '<div class="pagination">';
+    
+    // Previous button
+    if (currentPage > 1) {
+        paginationHTML += `<button class="page-btn" data-page="${currentPage - 1}"><i class="fas fa-chevron-left"></i></button>`;
+    }
+
+    // Page numbers
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    
+    if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    if (startPage > 1) {
+        paginationHTML += `<button class="page-btn" data-page="1">1</button>`;
+        if (startPage > 2) {
+            paginationHTML += `<span class="page-dots">...</span>`;
+        }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === currentPage ? 'active' : '';
+        paginationHTML += `<button class="page-btn ${activeClass}" data-page="${i}">${i}</button>`;
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            paginationHTML += `<span class="page-dots">...</span>`;
+        }
+        paginationHTML += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+    }
+
+    // Next button
+    if (currentPage < totalPages) {
+        paginationHTML += `<button class="page-btn" data-page="${currentPage + 1}"><i class="fas fa-chevron-right"></i></button>`;
+    }
+
+    paginationHTML += '</div>';
+    paginationContainer.innerHTML = paginationHTML;
+
+    // Add event listeners to pagination buttons
+    const pageButtons = paginationContainer.querySelectorAll('.page-btn');
+    pageButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = parseInt(btn.getAttribute('data-page'));
+            if (page !== currentPage) {
+                currentPage = page;
+                loadOrders(page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    });
+}

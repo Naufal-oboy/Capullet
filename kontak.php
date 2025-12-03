@@ -14,6 +14,7 @@ $wa = $contactInfo && $contactInfo['whatsapp'] ? $contactInfo['whatsapp'] : '628
 $ig = $contactInfo && $contactInfo['instagram'] ? $contactInfo['instagram'] : 'capull3t.smd';
 $addr = $contactInfo && $contactInfo['address'] ? $contactInfo['address'] : 'Jl. Subulussalam I no. 9, Sidomulyo, Kec. Samarinda Ilir, Kota Samarinda, Kalimantan Timur 75116';
 $maps = $contactInfo && $contactInfo['maps_embed'] ? $contactInfo['maps_embed'] : 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.664448375631!2d117.1620441747806!3d-0.4924445353086088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2df67fb548c8658d%3A0xe7b0004b646bfa61!2sKeripik%20usus%20dan%20kulit%20samarinda%20Capullet!5e0!3m2!1sen!2sid!4v1683033281234!5m2!1sen!2sid';
+$email = $contactInfo && isset($contactInfo['email']) ? $contactInfo['email'] : 'info@capullet.com';
 $hours = $contactInfo && $contactInfo['hours'] ? $contactInfo['hours'] : "Senin - Sabtu: 08.00 – 17.00\nMinggu: Tutup";
 $hoursLines = array_filter(array_map('trim', preg_split("/\r?\n/", $hours)));
 ?>
@@ -72,6 +73,14 @@ $hoursLines = array_filter(array_map('trim', preg_split("/\r?\n/", $hours)));
                     <h3>Ikuti di Instagram</h3>
                     <p class="contact-detail">@<?php echo e($ig); ?></p>
                     <a href="https://www.instagram.com/<?php echo e($ig); ?>" target="_blank" class="btn btn-primary">Kunjungi Instagram kami</a>
+                </div>
+                <div class="contact-card">
+                    <div class="icon-background">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p class="contact-detail"><?php echo e($email); ?></p>
+                    <a href="mailto:<?php echo e($email); ?>" class="btn btn-primary">Kirim Email</a>
                 </div>
             </div>
         </section>

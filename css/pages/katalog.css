@@ -34,7 +34,7 @@
 
 .filter-controls button.active {
     background-color: var(--nav-active-bg-color, #ff6b6b);
-    color: var(--white, #fff);
+    color: var(--text-dark, #000);
 }
 
 .catalog-grid {
@@ -146,7 +146,7 @@
 
 .btn-plus-cart:hover {
     background: var(--hover-color);
-    color: #000;
+    color: var(--text-light);
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(141, 215, 255, 0.6);
 }
@@ -189,6 +189,59 @@ header nav.scrolled {
     backdrop-filter: blur(5px);
 }
 
+/* ========================================
+   PAGINATION
+   ======================================== */
+#pagination-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.page-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    background: white;
+    color: var(--text-dark);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-btn:hover:not(.active) {
+    background: var(--hover-color);
+    color: white;
+    border-color: var(--hover-color);
+    box-shadow: 0 4px 12px rgba(238, 3, 132, 0.4);
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background: var(--primary-color);
+    color: var(--text-dark);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(141, 215, 255, 0.4);
+}
+
+.page-dots {
+    color: var(--text-muted);
+    padding: 0 8px;
+    user-select: none;
+}
+
 @media (max-width: 768px) {
     .filter-controls {
         width: 90%;
@@ -215,6 +268,18 @@ header nav.scrolled {
 
     .product-card-item img {
         height: 220px;
+    }
+    
+    /* Responsive pagination */
+    .pagination {
+        gap: 0.35rem;
+    }
+    
+    .page-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 8px;
+        font-size: 0.85rem;
     }
 }
 

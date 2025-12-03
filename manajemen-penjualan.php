@@ -135,6 +135,9 @@ require_once 'includes/auth-check.php';
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-container"></div>
         </div>
     </main>
 

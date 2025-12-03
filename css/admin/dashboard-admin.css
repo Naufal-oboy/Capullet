@@ -45,7 +45,7 @@ main.admin-main {
 
 .dashboard-link-card {
     background: var(--primary-color);
-    color: var(--text-light);
+    color: var(--text-dark);
     padding: 14px 28px;
     border-radius: 50px;
     text-align: center;

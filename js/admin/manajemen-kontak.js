@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('.page-form-container');
     const waInput = document.getElementById('whatsapp');
     const igInput = document.getElementById('instagram');
+    const emailInput = document.getElementById('email');
     const addrInput = document.getElementById('address');
     const mapsInput = document.getElementById('maps-url');
     const hoursInput = document.getElementById('hours');
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             waInput.value = data.whatsapp || '';
             igInput.value = data.instagram || '';
+            emailInput.value = data.email || '';
             addrInput.value = data.address || '';
             mapsInput.value = data.maps_embed || '';
             hoursInput.value = data.hours || '';
@@ -36,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     whatsapp: waInput.value,
                     instagram: igInput.value,
+                    email: emailInput.value,
                     address: addrInput.value,
                     maps_embed: mapsInput.value,
                     hours: hoursInput.value

@@ -53,6 +53,10 @@ require_once 'includes/auth-check.php';
                     <input type="text" id="instagram" value="capull3t.smd">
                 </div>
                 <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" value="info@capullet.com">
+                </div>
+                <div class="form-group">
                     <label for="address">Alamat</label>
                     <textarea id="address" rows="3">Jl. Subulussalam I no. 9, Sidomulyo, Kec. Samarinda Ilir, Kota Samarinda, Kalimantan Timur 75116</textarea>
                 </div>

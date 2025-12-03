@@ -166,7 +166,7 @@ $highlightProduct = $stmtHighlight->fetch();
                     </div>
 
                     <a href="kontak.php" class="btn btn-primary btn-lg">
-                        <i class="fas fa-shopping-bag"></i> Pesan Sekarang
+                        <i class="fas fa-shopping-bag"></i> Beli Sekarang
                     </a>
                 </div>
             </div>

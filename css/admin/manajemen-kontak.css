@@ -68,7 +68,7 @@
 /* Save Button Style */
 .btn-save {
     background-color: var(--primary-color);
-    color: var(--white);
+    color: var(--text-dark);
     padding: 14px 32px;
     border-radius: 50px;
     font-weight: 700;
@@ -84,6 +84,7 @@
 
 .btn-save:hover {
     background-color: var(--hover-color);
+    color: #e0e0e0;
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(238, 3, 132, 0.3);
 }

@@ -36,14 +36,14 @@ require_once 'includes/auth-check.php';
                 <li class="mobile-logout"><a href="#">Logout</a></li>
             </ul>
 
-            <a href="#" class="btn btn-logout desktop-logout">Logout</a>
+            <a href="#" class="btn btn-logout desktop-logout">Keluar</a>
         </nav>
     </header>
 
     <main class="admin-main container">
         <section class="dashboard-welcome">
             <h1>SELAMAT DATANG, ADMIN!</h1>
-            <p>Silakan melakukan manajemen produk, kategori produk, dan kegiatan.</p>
+            <p>Silahkan melakukan manajemen.</p>
         </section>
 
         <section class="dashboard-quick-links">

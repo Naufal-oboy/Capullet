@@ -274,7 +274,7 @@
 .product-card--horizontal .price {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #5A6E84;
+    color: var(--dark-grey);
     margin-bottom: 1.5rem;
 }
 
@@ -357,13 +357,13 @@
 }
 
 .filter-controls-index button:hover {
-    background-color: rgba(141, 215, 255, 0.1);
-    color: var(--primary-color);
+    background-color: var(--hover-color);
+    color: var(--text-light);
 }
 
 .filter-controls-index button.active {
     background-color: var(--primary-color);
-    color: var(--white);
+    color: var(--text-dark);
     box-shadow: 0 4px 15px rgba(141, 215, 255, 0.4);
 }
 
@@ -477,7 +477,7 @@
 .catalog-section .product-card-content .price {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--dark-grey);
     margin-bottom: 1rem;
 }
 

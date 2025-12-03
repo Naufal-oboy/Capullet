@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let categories = [];
     let products = [];
     let currentImageBase64 = ''; // Untuk nyimpen string gambar
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentFilter = 'all';
 
     // Load categories from database
     async function loadCategories() {
@@ -53,9 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Load products from database
-    async function loadProducts() {
+    async function loadProducts(page = 1, category = 'all') {
         try {
-            const response = await fetch('api/get-products.php', {
+            // For "Semua" tab, use pagination
+            let url = 'api/get-products.php';
+            if (category === 'all') {
+                url += `?page=${page}&limit=12`;
+            }
+            
+            const response = await fetch(url, {
                 cache: 'no-store',
                 headers: {'Cache-Control': 'no-cache'}
             });
@@ -75,8 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     canFried: false,
                     friedPrice: 0
                 }));
+                
+                // Update pagination info if available
+                if (result.pagination) {
+                    currentPage = result.pagination.current_page;
+                    totalPages = result.pagination.total_pages;
+                }
+                
                 console.log('Products loaded from DB:', products);
-                renderProducts();
+                renderProducts(category);
+                renderPagination();
             }
         } catch (error) {
             console.error('Error loading products:', error);
@@ -108,7 +125,22 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 categoryFilterContainer.querySelectorAll('button').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                renderProducts(btn.dataset.cat);
+                
+                const filterValue = btn.dataset.cat;
+                currentFilter = filterValue;
+                
+                // If "Semua" tab, reload with pagination
+                if (filterValue === 'all') {
+                    loadProducts(1, 'all');
+                } else {
+                    // For other tabs, show all products without pagination
+                    renderProducts(filterValue);
+                    // Hide pagination
+                    const paginationContainer = document.getElementById('pagination-container');
+                    if (paginationContainer) {
+                        paginationContainer.innerHTML = '';
+                    }
+                }
             });
         });
     }
@@ -354,4 +386,70 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', (e) => {
         renderProducts('all', e.target.value);
     });
+    
+    // Render Pagination
+    function renderPagination() {
+        const paginationContainer = document.getElementById('pagination-container');
+        
+        // Only show pagination for "Semua" tab
+        if (!paginationContainer || currentFilter !== 'all' || totalPages <= 1) {
+            if (paginationContainer) paginationContainer.innerHTML = '';
+            return;
+        }
+
+        let paginationHTML = '<div class="pagination">';
+        
+        // Previous button
+        if (currentPage > 1) {
+            paginationHTML += `<button class="page-btn" data-page="${currentPage - 1}"><i class="fas fa-chevron-left"></i></button>`;
+        }
+
+        // Page numbers
+        const maxVisible = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        
+        if (endPage - startPage < maxVisible - 1) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        if (startPage > 1) {
+            paginationHTML += `<button class="page-btn" data-page="1">1</button>`;
+            if (startPage > 2) {
+                paginationHTML += `<span class="page-dots">...</span>`;
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            paginationHTML += `<button class="page-btn ${activeClass}" data-page="${i}">${i}</button>`;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHTML += `<span class="page-dots">...</span>`;
+            }
+            paginationHTML += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+            paginationHTML += `<button class="page-btn" data-page="${currentPage + 1}"><i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        paginationHTML += '</div>';
+        paginationContainer.innerHTML = paginationHTML;
+
+        // Add event listeners to pagination buttons
+        const pageButtons = paginationContainer.querySelectorAll('.page-btn');
+        pageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = parseInt(btn.getAttribute('data-page'));
+                if (page !== currentPage) {
+                    loadProducts(page, currentFilter);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+    }
 });

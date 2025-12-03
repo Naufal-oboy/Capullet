@@ -64,6 +64,9 @@ require_once 'includes/auth-check.php';
                 <!-- Item produk akan di-render di sini oleh JS -->
                 <p style="text-align: center; width: 100%; color: #888;">Memuat data...</p>
             </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-container"></div>
         </div>
 
         <!-- VIEW 2: FORM TAMBAH/EDIT (Tersembunyi Default) -->

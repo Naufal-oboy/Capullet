@@ -2,12 +2,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('catalog-container');
     let products = [];
     let categories = [];
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentFilter = 'all';
 
     // Load data from database
-    async function loadData() {
+    async function loadData(page = 1, category = 'all') {
         try {
-            // Load products
-            const productsResponse = await fetch('api/get-products.php', {
+            // For "Semua" tab, use pagination
+            let url = 'api/get-products.php';
+            if (category === 'all') {
+                url += `?page=${page}&limit=12`;
+            }
+            
+            const productsResponse = await fetch(url, {
                 cache: 'no-store',
                 headers: {
                     'Cache-Control': 'no-cache'
@@ -24,33 +32,78 @@ document.addEventListener('DOMContentLoaded', async () => {
                     categoryName: p.nama_kategori || 'Lainnya',
                     image: p.gambar_utama || 'images/placeholder.jpg',
                     description: p.deskripsi || '',
-                    friedPrice: 0, // Bisa ditambahkan field di database jika perlu
+                    friedPrice: 0,
                     isBestSeller: p.is_best_seller == 1
                 }));
+                
+                // Update pagination info if available
+                if (productsResult.pagination) {
+                    currentPage = productsResult.pagination.current_page;
+                    totalPages = productsResult.pagination.total_pages;
+                }
+                
                 console.log('Products loaded:', products);
-                console.log('Best sellers:', products.filter(p => p.isBestSeller));
             }
 
-            // Load categories
-            const categoriesResponse = await fetch('api/get-categories.php', {
+            // Load categories on first load
+            if (categories.length === 0) {
+                const categoriesResponse = await fetch('api/get-categories.php', {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                const categoriesResult = await categoriesResponse.json();
+                
+                if (categoriesResult.success) {
+                    categories = categoriesResult.categories;
+                    updateFilterButtons();
+                }
+            }
+
+            renderProducts();
+            renderPagination();
+            
+        } catch (error) {
+            console.error('Error loading data:', error);
+            loadDummyData();
+        }
+    }
+    
+    // Load data by category without pagination
+    async function loadDataByCategory(category) {
+        try {
+            const productsResponse = await fetch(`api/get-products.php?category=${category}`, {
                 cache: 'no-store',
                 headers: {
                     'Cache-Control': 'no-cache'
                 }
             });
-            const categoriesResult = await categoriesResponse.json();
+            const productsResult = await productsResponse.json();
             
-            if (categoriesResult.success) {
-                categories = categoriesResult.categories;
-                updateFilterButtons();
+            if (productsResult.success) {
+                products = productsResult.products.map(p => ({
+                    id: parseInt(p.id_produk),
+                    name: p.nama_produk,
+                    price: parseFloat(p.harga),
+                    category: p.kategori_slug || 'uncategorized',
+                    categoryName: p.nama_kategori || 'Lainnya',
+                    image: p.gambar_utama || 'images/placeholder.jpg',
+                    description: p.deskripsi || '',
+                    friedPrice: 0,
+                    isBestSeller: p.is_best_seller == 1
+                }));
+                
+                renderProducts();
+                
+                // Hide pagination for non-"Semua" tabs
+                const paginationContainer = document.getElementById('pagination-container');
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
             }
-
-            renderProducts();
-            
         } catch (error) {
-            console.error('Error loading data:', error);
-            // Fallback ke dummy data jika API gagal
-            loadDummyData();
+            console.error('Error loading category data:', error);
         }
     }
 
@@ -200,29 +253,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 btn.classList.add('active');
                 
                 const filterValue = btn.getAttribute('data-filter');
+                currentFilter = filterValue;
 
-                animationQueue = [];
-                isProcessingQueue = false;
-                
-                productCards.forEach(card => {
-                    card.classList.remove('visible');
-                    card.style.display = 'none';
-                });
+                // If "Semua" tab, reload with pagination
+                if (filterValue === 'all') {
+                    loadData(1, 'all');
+                    return;
+                }
 
-                const matchedCards = [];
-                productCards.forEach(card => {
-                    const category = card.getAttribute('data-category');
-                    if (filterValue === 'all' || category === filterValue) {
-                        card.style.display = 'flex';
-                        matchedCards.push(card);
-                    }
-                });
-
-                matchedCards.forEach((card, index) => {
-                    setTimeout(() => {
-                        card.classList.add('visible');
-                    }, 50 + (index * 100));
-                });
+                // For other categories, load all products of that category from server
+                loadDataByCategory(filterValue);
             });
         });
     };
@@ -295,6 +335,72 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+    }
+    
+    // Render Pagination
+    function renderPagination() {
+        const paginationContainer = document.getElementById('pagination-container');
+        
+        // Only show pagination for "Semua" tab
+        if (!paginationContainer || currentFilter !== 'all' || totalPages <= 1) {
+            if (paginationContainer) paginationContainer.innerHTML = '';
+            return;
+        }
+
+        let paginationHTML = '<div class="pagination">';
+        
+        // Previous button
+        if (currentPage > 1) {
+            paginationHTML += `<button class="page-btn" data-page="${currentPage - 1}"><i class="fas fa-chevron-left"></i></button>`;
+        }
+
+        // Page numbers
+        const maxVisible = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        
+        if (endPage - startPage < maxVisible - 1) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        if (startPage > 1) {
+            paginationHTML += `<button class="page-btn" data-page="1">1</button>`;
+            if (startPage > 2) {
+                paginationHTML += `<span class="page-dots">...</span>`;
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            paginationHTML += `<button class="page-btn ${activeClass}" data-page="${i}">${i}</button>`;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHTML += `<span class="page-dots">...</span>`;
+            }
+            paginationHTML += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+            paginationHTML += `<button class="page-btn" data-page="${currentPage + 1}"><i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        paginationHTML += '</div>';
+        paginationContainer.innerHTML = paginationHTML;
+
+        // Add event listeners to pagination buttons
+        const pageButtons = paginationContainer.querySelectorAll('.page-btn');
+        pageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const page = parseInt(btn.getAttribute('data-page'));
+                if (page !== currentPage) {
+                    loadData(page, currentFilter);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
         });
     }
 

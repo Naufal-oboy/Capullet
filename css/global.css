@@ -6,7 +6,7 @@
 :root {
     --primary-color: #8DD7FF;
     --secondary-color: #36454F;
-    --text-dark: #414141;
+    --text-dark: rgb(65, 65, 65);
     --text-light: #FFFFFF;
     --white: #FFFFFF;
     --light-grey: #F8F8F8;
@@ -97,18 +97,18 @@ section {
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
-    color: #000;
+    color: #36454F;
 }
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: #000;
+    color: #36454F;
     box-shadow: 0 4px 15px rgba(141, 215, 255, 0.4);
 }
 
 .btn-primary:hover {
     background-color: var(--hover-color);
-    color: #000;
+    color: #e0e0e0;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(238, 3, 132, 0.4);
 }
@@ -176,13 +176,13 @@ header nav ul a:hover {
 
 header nav ul a.active {
     background-color: var(--nav-active-bg-color);
-    color: var(--white);
+    color: var(--text-dark);
 }
 
 .cart-button {
     position: relative;
     font-size: 1rem;
-    color: var(--white);
+    color: var(--text-dark);
     margin-left: 1.5rem;
     padding: 20px;
     border-radius: 50%;
@@ -198,7 +198,7 @@ header nav ul a.active {
 
 .cart-button:hover {
     background-color: var(--hover-color);
-    color: var(--white);
+    color: var(--text-light);
 }
 
 .cart-count-badge {
@@ -485,7 +485,7 @@ main.admin-main {
 
 .btn-add {
     background: var(--primary-color);
-    color: var(--white);
+    color: var(--text-dark);
     padding: 12px 24px;
     border-radius: 8px;
     border: none;
@@ -606,11 +606,12 @@ div:where(.swal2-container) button.swal2-styled {
 
 div:where(.swal2-container) button.swal2-confirm {
     background-color: var(--primary-color) !important;
-    color: var(--white) !important;
+    color: var(--text-dark) !important;
 }
 
 div:where(.swal2-container) button.swal2-confirm:hover {
     background-color: var(--hover-color) !important;
+    color: var(--text-light) !important;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(238, 3, 132, 0.3) !important;
 }

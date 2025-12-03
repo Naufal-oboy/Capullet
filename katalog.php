@@ -47,6 +47,9 @@
 
             <div class="catalog-grid" id="catalog-container">
             </div>
+            
+            <!-- Pagination -->
+            <div id="pagination-container"></div>
         </section>
 
         <section class="cta-section">
