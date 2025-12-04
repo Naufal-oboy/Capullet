@@ -6,7 +6,7 @@ try {
     $db = Database::getInstance();
     $pdo = $db->getConnection();
     
-    $stmt = $pdo->query("SELECT * FROM kegiatan ORDER BY created_at DESC");
+    $stmt = $pdo->query("SELECT * FROM kegiatan WHERE is_aktif = 1 ORDER BY created_at DESC");
     $kegiatan = $stmt->fetchAll();
     
     echo json_encode([

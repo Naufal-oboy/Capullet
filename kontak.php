@@ -80,7 +80,7 @@ $hoursLines = array_filter(array_map('trim', preg_split("/\r?\n/", $hours)));
                     </div>
                     <h3>Email</h3>
                     <p class="contact-detail"><?php echo e($email); ?></p>
-                    <a href="mailto:<?php echo e($email); ?>" class="btn btn-primary">Kirim Email</a>
+                    <a href="https://mail.google.com/mail/u/0/?fs=1&to=<?php echo urlencode($email); ?>&subject=Pertanyaan%20dari%20Website&body=" target="_blank" class="btn btn-primary">Kirim Email</a>
                 </div>
             </div>
         </section>
@@ -119,27 +119,30 @@ $hoursLines = array_filter(array_map('trim', preg_split("/\r?\n/", $hours)));
             <div class="footer-grid">
                 <div class="footer-about">
                     <h3>Tentang Kami</h3>
-                    <p>Capullet Pangan Lumintu adalah perusahaan yang memproduksi olahan keripik dan frozen food berkualitas.</p>
+                    <p><?php 
+                        $aboutText = ($contactInfo && isset($contactInfo['about'])) ? $contactInfo['about'] : 'Capullet Pangan Lumintu adalah perusahaan yang memproduksi olahan keripik dan frozen food berkualitas.';
+                        echo e($aboutText);
+                    ?></p>
                 </div>
                 <div class="footer-nav">
                     <h3>Navigasi Cepat</h3>
                     <ul>
-                        <li><a href="index.html">Beranda</a></li>
-                        <li><a href="katalog.html">Katalog</a></li>
-                        <li><a href="kegiatan.html">Kegiatan</a></li>
-                        <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                        <li><a href="kontak.html">Kontak</a></li>
+                        <li><a href="index.php">Beranda</a></li>
+                        <li><a href="katalog.php">Katalog</a></li>
+                        <li><a href="kegiatan.php">Kegiatan</a></li>
+                        <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                        <li><a href="kontak.php">Kontak</a></li>
                     </ul>
                 </div>
                 <div class="footer-address">
                     <h3>Alamat</h3>
-                    <p>Jl. Subulussalam I no. 9, Sidomulyo, Kec. Samarinda Ilir, Kota Samarinda, Kalimantan Timur 75116</p>
+                    <p><?php echo e($addr); ?></p>
                 </div>
                 <div class="footer-contact">
                     <h3>Hubungi Kami</h3>
                     <div class="social-links">
-                        <a href="https://www.instagram.com/capull3t.smd" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="https://wa.me/6282251004290" target="_blank" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/<?php echo e($ig); ?>" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/<?php echo e($wa); ?>" target="_blank" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>

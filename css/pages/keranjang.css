@@ -279,7 +279,7 @@
 
 .btn-send-whatsapp:hover {
     background-color: var(--hover-color);
-    color: #000;
+    color: var(--text-light);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(238, 3, 132, 0.4);
 }

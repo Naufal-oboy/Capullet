@@ -58,6 +58,7 @@ main.admin-main {
 
 .dashboard-link-card:hover {
     transform: translateY(-3px);
+    color: var(--text-light);
     box-shadow: 0 8px 20px rgba(141, 215, 255, 0.5);
     background-color: var(--hover-color);
 }
