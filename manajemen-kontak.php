@@ -32,10 +32,10 @@ require_once 'includes/auth-check.php';
                 <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
                 <li><a href="manajemen-kontak.php" class="active">Kontak</a></li>
                 <li><a href="manajemen-pengaturan.php">Pengaturan</a></li>
-                <li class="mobile-logout"><a href="#">Logout</a></li>
+                <li class="mobile-logout"><a href="#">Keluar</a></li>
             </ul>
 
-            <a href="#" class="btn btn-logout desktop-logout">Logout</a>
+            <a href="#" class="btn btn-logout desktop-logout">Keluar</a>
         </nav>
     </header>
 

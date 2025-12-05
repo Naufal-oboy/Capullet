@@ -135,10 +135,10 @@ try {
                 <li><a href="manajemen-tentang-kami.php">Tentang Kami</a></li>
                 <li><a href="manajemen-kontak.php">Kontak</a></li>
                 <li><a href="manajemen-pengaturan.php" class="active">Pengaturan</a></li>
-                <li class="mobile-logout"><a href="#">Logout</a></li>
+                <li class="mobile-logout"><a href="#">Keluar</a></li>
             </ul>
 
-            <a href="#" class="btn btn-logout desktop-logout">Logout</a>
+            <a href="#" class="btn btn-logout desktop-logout">Keluar</a>
         </nav>
     </header>
 
