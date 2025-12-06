@@ -143,7 +143,7 @@ try {
     </header>
 
     <main class="admin-main container">
-        <h1 class="admin-page-title">MANAJEMEN PENGATURAN</h1>
+        <h1 class="admin-page-title">PENGATURAN</h1>
 
         <!-- SECTION FAQs -->
         <div class="management-container" id="faq-list-view">

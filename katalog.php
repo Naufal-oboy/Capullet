@@ -87,6 +87,7 @@
                     <div class="social-links">
                         <a href="https://www.instagram.com/capull3t.smd" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://wa.me/6282251004290" target="_blank" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://mail.google.com/mail/u/0/?fs=1&to=info@capullet.com" target="_blank" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
             </div>

@@ -45,18 +45,30 @@ require_once 'includes/auth-check.php';
         <form class="page-form-container">
             <div class="form-section">
                 <div class="form-group">
-                    <div class="form-group">
-                        <label for="about-image">Gambar Utama</label>
-                        
-                        <div class="image-preview-box" style="max-width: 30%;"> 
-                            <img src="images/about-product.jpg" alt="Preview Tentang Kami">
-                        </div>
-                        
-                        <input type="file" id="about-image" class="file-input">
+                    <label for="about-image">Gambar Card 1</label>
+                    <div class="image-preview-box" style="max-width: 30%;"> 
+                        <img src="images/about-product.jpg" alt="Preview Tentang Kami">
                     </div>
+                    <input type="file" id="about-image" class="file-input">
+                </div>
                 <div class="form-group">
                     <label for="about-p1">Deskripsi</label>
                     <textarea id="about-p1" rows="5">Kami adalah sebuah perusahaan yang membuat kreasi makanan olahan keripik dan frozen food. Capullet Pangan Lumintu dibangun untuk pelayanan kebutuhan yang dikhususkan untuk penyediaan cemilan frozen dan olahan keripik yang berkualitas dan tentunya dengan cita rasa nomor satu demi memuaskan kebutuhan pelanggan kami.</textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="about-image-2">Gambar Card 2</label>
+                    <div class="image-preview-box" style="max-width: 30%;"> 
+                        <img id="about-image-2-preview" src="images/about-product.jpg" alt="Preview Tentang Kami 2">
+                    </div>
+                    <input type="file" id="about-image-2" class="file-input">
+                </div>
+                <div class="form-group">
+                    <label for="about-p2">Deskripsi Card 2</label>
+                    <textarea id="about-p2" rows="5">Dengan tim yang berpengalaman, kami menyiapkan proses produksi higienis, kontrol kualitas ketat, dan pengiriman yang rapi agar setiap pesanan tiba dalam kondisi terbaik.
+Kami juga berkomitmen untuk terus berinovasi pada rasa dan varian produk, sehingga pelanggan selalu punya alasan untuk kembali menikmati camilan Capullet.</textarea>
                 </div>
             </div>
 

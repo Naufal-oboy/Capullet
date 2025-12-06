@@ -143,6 +143,7 @@ $hoursLines = array_filter(array_map('trim', preg_split("/\r?\n/", $hours)));
                     <div class="social-links">
                         <a href="https://www.instagram.com/<?php echo e($ig); ?>" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://wa.me/<?php echo e($wa); ?>" target="_blank" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://mail.google.com/mail/u/0/?fs=1&to=<?php echo urlencode($email); ?>" target="_blank" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
             </div>

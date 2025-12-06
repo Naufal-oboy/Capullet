@@ -15,6 +15,11 @@
     overflow: hidden;
     max-width: 950px;
     width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.about-card.reverse {
+    flex-direction: row-reverse;
 }
 
 .about-card img {
@@ -97,8 +102,37 @@
     margin-right: auto;
 }
 
+.vision-mission-item ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 400px;
+    text-align: left;
+}
+
+.vision-mission-item ul li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #555;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.vision-mission-item ul li::before {
+    content: '●';
+    position: absolute;
+    left: 0;
+    color: #000;
+    font-size: 1rem;
+}
+
 @media (max-width: 768px) {
     .about-card {
+        flex-direction: column;
+    }
+
+    .about-card.reverse {
         flex-direction: column;
     }
 

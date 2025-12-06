@@ -367,10 +367,51 @@ $highlightProduct = $stmtHighlight->fetch();
                     </div>
                 </div>
                 <div class="view-all-container">
-                    <a href="https://maps.app.goo.gl/..." class="btn btn-primary" target="_blank">Beri Ulasan</a>
+                    <a href="#" class="btn btn-primary" id="btn-open-review">Beri Ulasan</a>
                 </div>
             </div>
         </section>
+
+        <!-- 7b. REVIEW FORM MODAL -->
+        <div class="review-modal" id="review-modal" aria-hidden="true">
+            <div class="review-modal-backdrop" id="review-modal-backdrop"></div>
+            <div class="review-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+                <button class="review-modal-close" id="review-modal-close" aria-label="Tutup">&times;</button>
+                <div class="section-header">
+                    <h2 id="review-modal-title">Tulis Ulasan</h2>
+                    <p>Bagikan pengalaman Anda agar kami bisa terus memperbaiki layanan.</p>
+                </div>
+                <form id="home-review-form" class="review-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="home-review-name">Nama</label>
+                            <input type="text" id="home-review-name" name="name" placeholder="Mis: Budi Santoso" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="home-review-email">Email (opsional)</label>
+                            <input type="email" id="home-review-email" name="email" placeholder="nama@email.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="home-review-rating">Rating</label>
+                            <select id="home-review-rating" name="rating" required>
+                                <option value="5">5 - Sangat puas</option>
+                                <option value="4">4 - Puas</option>
+                                <option value="3">3 - Cukup</option>
+                                <option value="2">2 - Kurang</option>
+                                <option value="1">1 - Tidak puas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="home-review-message">Ulasan</label>
+                            <textarea id="home-review-message" name="message" rows="4" placeholder="Contoh: Rasanya mantap! Frozen foodnya praktis banget buat stok di rumah. Anak-anak suka banget sama risol mayonya." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Kirim Ulasan</button>
+                </form>
+            </div>
+        </div>
 
         <!-- 8. FAQ (Dynamic from Database) -->
         <section class="container faq-section" id="faq">
@@ -412,6 +453,7 @@ $highlightProduct = $stmtHighlight->fetch();
                     <div class="social-links">
                         <a href="#"><i class="fab fa-instagram"></i></a>
                         <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://mail.google.com/mail/u/0/?fs=1&to=info@capullet.com" target="_blank" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
             </div>

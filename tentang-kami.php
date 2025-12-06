@@ -7,7 +7,8 @@ try {
     $stmt = $pdo->query("SELECT * FROM tentang_kami WHERE is_aktif = 1 ORDER BY urutan ASC, id ASC");
     $rows = $stmt->fetchAll();
     foreach ($rows as $row) {
-        $key = strtolower($row['judul_section'] ?? '');
+        $rawKey = strtolower(trim($row['judul_section'] ?? ''));
+        $key = preg_replace('/\s+/', '_', $rawKey);
         $sections[$key] = $row;
     }
 } catch (Exception $e) {
@@ -15,7 +16,9 @@ try {
 }
 function e($s){return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');}
 $imgPath = isset($sections['about_image']['gambar']) && $sections['about_image']['gambar'] ? $sections['about_image']['gambar'] : 'images/about-product.jpg';
+$imgPath2 = isset($sections['about_image_2']['gambar']) && $sections['about_image_2']['gambar'] ? $sections['about_image_2']['gambar'] : 'images/about-product.jpg';
 $deskripsi = isset($sections['deskripsi']['konten']) ? $sections['deskripsi']['konten'] : '';
+$deskripsi2 = isset($sections['deskripsi_2']['konten']) ? $sections['deskripsi_2']['konten'] : '';
 $visi = isset($sections['visi']['konten']) ? $sections['visi']['konten'] : '';
 $misi = isset($sections['misi']['konten']) ? $sections['misi']['konten'] : '';
 $misiItems = array_filter(array_map('trim', preg_split("/\r?\n/", $misi)));
@@ -68,6 +71,18 @@ $misiItems = array_filter(array_map('trim', preg_split("/\r?\n/", $misi)));
                         <p>Capullet adalah sebuah perusahaan yang membuat kreasi makanan olahan keripik dan frozen food.</p>
                     <?php endif; ?>
                 </div>
+            </div>
+
+            <div class="about-card">
+                <div class="about-card-content">
+                    <?php if ($deskripsi2): ?>
+                        <p><?php echo nl2br(e($deskripsi2)); ?></p>
+                    <?php else: ?>
+                        <p>Dengan tim yang berpengalaman, kami menyiapkan proses produksi higienis, kontrol kualitas ketat, dan pengiriman yang rapi agar setiap pesanan tiba dalam kondisi terbaik.</p>
+                        <p>Kami juga berkomitmen untuk terus berinovasi pada rasa dan varian produk, sehingga pelanggan selalu punya alasan untuk kembali menikmati camilan Capullet.</p>
+                    <?php endif; ?>
+                </div>
+                <img src="<?php echo e($imgPath2); ?>" alt="Proses Produksi Capullet" onerror="this.src='images/about-product.jpg'">
             </div>
         </section>
 
@@ -125,6 +140,7 @@ $misiItems = array_filter(array_map('trim', preg_split("/\r?\n/", $misi)));
                     <div class="social-links">
                         <a href="https://www.instagram.com/capull3t.smd" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://wa.me/6282251004290" target="_blank" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://mail.google.com/mail/u/0/?fs=1&to=info@capullet.com" target="_blank" aria-label="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
             </div>

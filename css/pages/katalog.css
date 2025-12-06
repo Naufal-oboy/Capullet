@@ -157,7 +157,7 @@
 }
 
 .cta-section .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 3rem 2rem;
     background-color: var(--nav-bg-color, #f0f8ff);
@@ -168,13 +168,14 @@
 .cta-section h2 {
     margin-bottom: 1rem;
     color: var(--secondary-color, #333);
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
 
 .cta-section p {
-    max-width: 500px;
+    max-width: 700px;
     margin: 0 auto 2rem auto;
     color: var(--text-dark, #555);
+    font-size: 1.1rem;
 }
 
 header nav {

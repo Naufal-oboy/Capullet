@@ -257,4 +257,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadFaqs();
+
+    /* =========================================
+       5. REVIEW FORM (HOME) TOGGLE & SEND
+       ========================================= */
+    const btnOpenReview = document.getElementById('btn-open-review');
+    const reviewModal = document.getElementById('review-modal');
+    const reviewBackdrop = document.getElementById('review-modal-backdrop');
+    const reviewClose = document.getElementById('review-modal-close');
+    const reviewForm = document.getElementById('home-review-form');
+
+    const openReviewModal = () => {
+        if (!reviewModal) return;
+        reviewModal.classList.add('show');
+        reviewModal.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeReviewModal = () => {
+        if (!reviewModal) return;
+        reviewModal.classList.remove('show');
+        reviewModal.setAttribute('aria-hidden', 'true');
+    };
+
+    if (btnOpenReview) {
+        btnOpenReview.addEventListener('click', (e) => {
+            e.preventDefault();
+            openReviewModal();
+        });
+    }
+    if (reviewBackdrop) reviewBackdrop.addEventListener('click', closeReviewModal);
+    if (reviewClose) reviewClose.addEventListener('click', closeReviewModal);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeReviewModal();
+    });
+
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = (document.getElementById('home-review-name')?.value || '').trim();
+            const email = (document.getElementById('home-review-email')?.value || '').trim();
+            const rating = document.getElementById('home-review-rating')?.value || '5';
+            const message = (document.getElementById('home-review-message')?.value || '').trim();
+
+            if (!name || !message) {
+                alert('Nama dan ulasan wajib diisi.');
+                return;
+            }
+
+            fetch('api/reviews/create.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, rating, message })
+            }).then(res => res.json())
+              .then(data => {
+                  if (!data.success) throw new Error(data.message || 'Gagal menyimpan ulasan');
+                  alert('Terima kasih! Ulasan Anda sudah disimpan.');
+                  reviewForm.reset();
+                  closeReviewModal();
+              })
+              .catch(err => {
+                  console.error(err);
+                  alert('Gagal menyimpan ulasan. Silakan coba lagi.');
+              });
+        });
+    }
 });
