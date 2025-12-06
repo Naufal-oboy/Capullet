@@ -184,7 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function showForm(isEdit = false) {
         viewList.classList.add('hidden');
         viewForm.classList.remove('hidden');
-        window.scrollTo(0, 0);
+        // Scroll form into view smoothly instead of jumping to top
+        viewForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
         
         if(!isEdit) {
             resetForm();

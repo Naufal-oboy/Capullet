@@ -299,3 +299,68 @@ reviewsTableBody?.addEventListener('click', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     loadReviews();
 });
+
+// ===== PASSWORD UPDATE =====
+const btnUpdatePassword = document.getElementById('btnUpdatePassword');
+
+btnUpdatePassword?.addEventListener('click', async () => {
+    const currentPassword = document.getElementById('currentPassword').value.trim();
+    const newPassword = document.getElementById('newPassword').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        Swal.fire('Error', 'Semua field wajib diisi!', 'error');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        Swal.fire('Error', 'Password baru minimal 6 karakter!', 'error');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        Swal.fire('Error', 'Password baru dan konfirmasi password tidak cocok!', 'error');
+        return;
+    }
+
+    btnUpdatePassword.disabled = true;
+    btnUpdatePassword.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memperbarui...';
+
+    try {
+        const response = await fetch('api/auth/update-password.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: result.message,
+                timer: 2000
+            }).then(() => {
+                // Clear form
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            });
+        } else {
+            Swal.fire('Error', result.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'Gagal memperbarui password', 'error');
+    } finally {
+        btnUpdatePassword.disabled = false;
+        btnUpdatePassword.innerHTML = '<i class="fas fa-save"></i> Perbarui Password';
+    }
+});

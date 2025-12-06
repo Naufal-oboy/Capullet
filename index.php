@@ -231,7 +231,7 @@ try {
                         <span class="amount"><?= number_format($highlightProduct['harga'] ?? 0, 0, ',', '.') ?></span>
                     </div>
 
-                    <a href="kontak.php" class="btn btn-primary btn-lg">
+                    <a href="katalog.php" class="btn btn-primary btn-lg">
                         <i class="fas fa-shopping-bag"></i> Beli Sekarang
                     </a>
                 </div>
@@ -252,7 +252,7 @@ try {
                         <div class="product-card-content">
                             <h3><?= htmlspecialchars($product['nama_produk']) ?></h3>
                             <p class="price">Rp <?= number_format($product['harga'], 0, ',', '.') ?></p>
-                            <a href="kontak.php" class="btn btn-primary">Beli Sekarang</a>
+                            <a href="katalog.php" class="btn btn-primary">Beli Sekarang</a>
                         </div>
                         <div class="product-card-image">
                             <img src="<?= htmlspecialchars($product['gambar_utama']) ?>" alt="<?= htmlspecialchars($product['nama_produk']) ?>">
@@ -456,11 +456,11 @@ try {
                 <div class="footer-nav">
                     <h3>Navigasi Cepat</h3>
                     <ul>
-                        <li><a href="index.html">Beranda</a></li>
-                        <li><a href="katalog.html">Katalog</a></li>
-                        <li><a href="kegiatan.html">Kegiatan</a></li>
-                        <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                        <li><a href="kontak.html">Kontak</a></li>
+                        <li><a href="index.php">Beranda</a></li>
+                        <li><a href="katalog.php">Katalog</a></li>
+                        <li><a href="kegiatan.php">Kegiatan</a></li>
+                        <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                        <li><a href="kontak.php">Kontak</a></li>
                     </ul>
                 </div>
                 <div class="footer-address">

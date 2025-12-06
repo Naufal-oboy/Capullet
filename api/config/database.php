@@ -22,10 +22,15 @@ class Database {
                 ]
             );
         } catch(PDOException $e) {
-            die(json_encode([
+            ob_end_clean();
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode([
                 'success' => false,
-                'message' => 'Database connection failed: ' . $e->getMessage()
-            ]));
+                'message' => 'Database connection failed: ' . $e->getMessage(),
+                'type' => 'database_connection'
+            ]);
+            exit;
         }
     }
 

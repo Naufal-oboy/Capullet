@@ -304,6 +304,32 @@ try {
                 </div>
             </div>
         </div>
+
+        <!-- SECTION UPDATE PASSWORD -->
+        <div class="management-container" style="margin-top: 3rem;">
+            <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;"><i class="fas fa-key"></i> Perbarui Password Admin</h2>
+            
+            <div class="password-update-form" style="max-width: 600px;">
+                <div class="form-group">
+                    <label for="currentPassword">Password Saat Ini</label>
+                    <input type="password" id="currentPassword" placeholder="Masukkan password saat ini">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Password Baru</label>
+                    <input type="password" id="newPassword" placeholder="Masukkan password baru">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Konfirmasi Password Baru</label>
+                    <input type="password" id="confirmPassword" placeholder="Ketik ulang password baru">
+                </div>
+
+                <button class="btn-add" id="btnUpdatePassword" style="margin-top: 1rem;">
+                    <i class="fas fa-save"></i> Perbarui Password
+                </button>
+            </div>
+        </div>
     </main>
 
     <footer class="admin-footer">

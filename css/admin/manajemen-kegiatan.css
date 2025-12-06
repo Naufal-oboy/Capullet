@@ -148,3 +148,56 @@
         height: auto;
     }
 }
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+#pagination-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.page-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    background: white;
+    color: var(--text-dark);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-btn:hover:not(.active) {
+    background: var(--hover-color);
+    color: white;
+    border-color: var(--hover-color);
+    box-shadow: 0 4px 12px rgba(238, 3, 132, 0.4);
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background: var(--primary-color);
+    color: var(--text-dark);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(141, 215, 255, 0.4);
+}
+
+.page-dots {
+    color: var(--text-muted);
+    padding: 0 8px;
+    user-select: none;
+}

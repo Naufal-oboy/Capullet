@@ -62,9 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let currentPage = 1;
+    const itemsPerPage = 3;
+
     // --- 3. RENDER FUNCTIONS ---
     
-    function renderActivities(query = '') {
+    function renderActivities(query = '', page = 1) {
         gridContainer.innerHTML = '';
 
         // Filter berdasarkan pencarian (Judul atau Deskripsi)
@@ -78,7 +81,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        filtered.forEach(act => {
+        // Pagination logic
+        const totalPages = Math.ceil(filtered.length / itemsPerPage);
+        page = Math.max(1, Math.min(page, totalPages));
+        currentPage = page;
+        
+        const startIdx = (page - 1) * itemsPerPage;
+        const endIdx = startIdx + itemsPerPage;
+        const pageItems = filtered.slice(startIdx, endIdx);
+
+        // Render items
+        pageItems.forEach(act => {
             const card = document.createElement('article');
             card.className = 'activity-admin-card';
             card.innerHTML = `
@@ -98,6 +111,60 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             gridContainer.appendChild(card);
         });
+
+        // Render pagination
+        if (totalPages > 1) {
+            // Remove existing pagination container if it exists
+            const existingPagination = document.getElementById('pagination-container');
+            if (existingPagination) {
+                existingPagination.remove();
+            }
+            
+            const paginationContainer = document.createElement('div');
+            paginationContainer.id = 'pagination-container';
+            
+            let paginationHTML = '<div class="pagination">';
+            
+            // Previous button
+            if (page > 1) {
+                paginationHTML += `<button class="page-btn" onclick="window.goToPage(${page - 1})"><i class="fas fa-chevron-left"></i></button>`;
+            }
+
+            // Page numbers
+            const startPage = Math.max(1, page - 1);
+            const endPage = Math.min(totalPages, page + 1);
+            
+            if (startPage > 1) {
+                paginationHTML += '<span class="page-dots">...</span>';
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === page) {
+                    paginationHTML += `<span class="page-btn active">${i}</span>`;
+                } else {
+                    paginationHTML += `<button class="page-btn" onclick="window.goToPage(${i})">${i}</button>`;
+                }
+            }
+
+            if (endPage < totalPages) {
+                paginationHTML += '<span class="page-dots">...</span>';
+            }
+
+            // Next button
+            if (page < totalPages) {
+                paginationHTML += `<button class="page-btn" onclick="window.goToPage(${page + 1})"><i class="fas fa-chevron-right"></i></button>`;
+            }
+
+            paginationHTML += '</div>';
+            paginationContainer.innerHTML = paginationHTML;
+            gridContainer.parentNode.insertBefore(paginationContainer, gridContainer.nextSibling);
+        } else {
+            // Remove pagination if only 1 page
+            const existingPagination = document.getElementById('pagination-container');
+            if (existingPagination) {
+                existingPagination.remove();
+            }
+        }
     }
 
     // --- 4. FORM HANDLING ---
@@ -105,7 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function showForm(isEdit = false) {
         viewList.classList.add('hidden');
         viewForm.classList.remove('hidden');
-        window.scrollTo(0, 0); // Scroll ke atas
+        // Scroll form into view smoothly instead of jumping to top
+        viewForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
         
         if (!isEdit) {
             resetForm();
@@ -245,13 +313,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Search Real-time
     searchInput.addEventListener('input', (e) => {
-        renderActivities(e.target.value);
+        currentPage = 1; // Reset to page 1 when searching
+        renderActivities(e.target.value, currentPage);
     });
 
     // Tombol Tambah & Batal
     btnShowAdd.addEventListener('click', () => showForm(false));
     btnCancel.addEventListener('click', hideForm);
 
-    // --- 7. INITIALIZE ---
+    // --- 7. GLOBAL FUNCTIONS FOR PAGINATION ---
+    window.goToPage = function(page) {
+        renderActivities(searchInput.value, page);
+    }
+
+    // --- 8. INITIALIZE ---
     loadActivities();
 });

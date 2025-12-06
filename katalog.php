@@ -56,7 +56,7 @@
              <div class="container">
                 <h2>Siap untuk memesan?</h2>
                 <p>Jangan tunda kelezatannya! Hubungi kami via WhatsApp atau Instagram untuk pemesanan.</p>
-                <a href="kontak.html" class="btn btn-primary">Pesan Sekarang</a>
+                <button class="btn btn-primary" onclick="window.location.href='#catalog-container'">Beli Sekarang</button>
             </div>
         </section>
     </main>
@@ -71,11 +71,11 @@
                 <div class="footer-nav">
                     <h3>Navigasi Cepat</h3>
                     <ul>
-                        <li><a href="index.html">Beranda</a></li>
-                        <li><a href="katalog.html">Katalog</a></li>
-                        <li><a href="kegiatan.html">Kegiatan</a></li>
-                        <li><a href="tentang-kami.html">Tentang Kami</a></li>
-                        <li><a href="kontak.html">Kontak</a></li>
+                        <li><a href="index.php">Beranda</a></li>
+                        <li><a href="katalog.php">Katalog</a></li>
+                        <li><a href="kegiatan.php">Kegiatan</a></li>
+                        <li><a href="tentang-kami.php">Tentang Kami</a></li>
+                        <li><a href="kontak.php">Kontak</a></li>
                     </ul>
                 </div>
                 <div class="footer-address">

@@ -1,0 +1,273 @@
+<?php
+// Immediately set up output buffering and headers
+ob_start();
+
+// Set headers first before any potential errors
+http_response_code(200);
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+// Handle CORS preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    ob_end_clean();
+    http_response_code(200);
+    exit;
+}
+
+// Set error handling to not output errors directly
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
+
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'PHP Error: ' . $errstr . ' (File: ' . basename($errfile) . ':' . $errline . ')',
+        'type' => 'error',
+        'errno' => $errno
+    ]);
+    exit;
+});
+
+// Check if database config file exists
+$dbConfigPath = __DIR__ . '/config/database.php';
+if (!file_exists($dbConfigPath)) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database configuration file not found',
+        'type' => 'config_error',
+        'path' => $dbConfigPath
+    ]);
+    exit;
+}
+
+require_once $dbConfigPath;
+
+// Set exception handler
+set_exception_handler(function($exception) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Exception: ' . $exception->getMessage(),
+        'type' => 'exception',
+        'file' => basename($exception->getFile()),
+        'line' => $exception->getLine()
+    ]);
+    exit;
+});
+
+// Set shutdown handler untuk menangkap fatal errors
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== null && ($error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR))) {
+        ob_end_clean();
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Fatal error: ' . $error['message'],
+            'type' => 'fatal_error',
+            'file' => basename($error['file']),
+            'line' => $error['line']
+        ]);
+    }
+});
+
+// Ambil data dari request
+$rawInput = file_get_contents('php://input');
+$data = json_decode($rawInput, true);
+
+// Check JSON decode error
+if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+    ob_end_clean();
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid JSON: ' . json_last_error_msg(),
+        'type' => 'json_error'
+    ]);
+    exit;
+}
+
+if (!$data) {
+    ob_end_clean();
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Invalid data']);
+    exit;
+}
+
+// Validasi data
+if (empty($data['customerName']) || empty($data['items']) || count($data['items']) == 0) {
+    ob_end_clean();
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    exit;
+}
+
+try {
+    $db = Database::getInstance();
+    $pdo = $db->getConnection();
+    
+    // Check if connection is valid
+    if (!$pdo) {
+        throw new Exception('PDO connection is null');
+    }
+    
+    $pdo->beginTransaction();
+
+    // Generate unique order number using timestamp and random string
+    $timestamp = microtime(true);
+    $uniquePart = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 4);
+    $orderNumber = 'ORD-' . date('Y') . '-' . str_pad((int)($timestamp % 1000), 3, '0', STR_PAD_LEFT) . '-' . $uniquePart;
+    
+    // Ensure order number is truly unique
+    $checkStmt = $pdo->prepare("SELECT id_order FROM orders WHERE order_number = ? LIMIT 1");
+    $checkStmt->execute([$orderNumber]);
+    if ($checkStmt->fetch()) {
+        // If collision happens, generate with current timestamp milliseconds
+        $orderNumber = 'ORD-' . date('YmdHis') . '-' . rand(1000, 9999);
+    }
+
+    // Insert order
+    $stmt = $pdo->prepare("
+        INSERT INTO orders 
+        (order_number, customer_name, customer_phone, customer_email, customer_address, 
+         subtotal, shipping_cost, total_amount, payment_method, status, notes, created_at) 
+        VALUES 
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ");
+
+    $customerName = $data['customerName'];
+    $customerPhone = $data['customerPhone'] ?? '';
+    $customerEmail = $data['customerEmail'] ?? '';
+    $customerAddress = $data['customerAddress'] ?? 'Ambil Sendiri';
+    $subtotal = (float)($data['subtotal'] ?? 0);
+    $shippingCost = (float)($data['shippingCost'] ?? 0);
+    $totalAmount = $subtotal + $shippingCost;
+    $paymentMethod = $data['paymentMethod'] ?? '';
+    // Gunakan status dari request jika tersedia, fallback ke pending
+    $status = isset($data['status']) && $data['status'] !== '' ? $data['status'] : 'pending';
+    $notes = $data['notes'] ?? '';
+
+    // Validate numeric values
+    if ($subtotal < 0 || !is_numeric($subtotal)) {
+        throw new Exception('Invalid subtotal value: ' . $subtotal);
+    }
+    if ($shippingCost < 0 || !is_numeric($shippingCost)) {
+        throw new Exception('Invalid shipping cost value: ' . $shippingCost);
+    }
+    if ($totalAmount < 0 || !is_numeric($totalAmount)) {
+        throw new Exception('Invalid total amount value: ' . $totalAmount);
+    }
+
+    $stmt->execute([
+        $orderNumber,
+        $customerName,
+        $customerPhone,
+        $customerEmail,
+        $customerAddress,
+        $subtotal,
+        $shippingCost,
+        $totalAmount,
+        $paymentMethod,
+        $status,
+        $notes
+    ]);
+
+    $orderId = $pdo->lastInsertId();
+
+    // Insert order items
+    $stmt = $pdo->prepare("
+        INSERT INTO order_items 
+        (id_order, id_produk, nama_produk, harga, quantity, subtotal) 
+        VALUES 
+        (?, ?, ?, ?, ?, ?)
+    ");
+
+    foreach ($data['items'] as $item) {
+        // Validate item data
+        if (empty($item['productName']) || !isset($item['quantity']) || !isset($item['price']) || !isset($item['subtotal'])) {
+            throw new Exception('Invalid item data: missing required fields');
+        }
+
+        $productId = isset($item['productId']) && (int)$item['productId'] > 0 ? (int)$item['productId'] : null;
+        $itemPrice = (float)$item['price'];
+        $itemQuantity = (int)$item['quantity'];
+        $itemSubtotal = (float)$item['subtotal'];
+
+        // Validate numeric values
+        if ($itemPrice < 0 || !is_numeric($itemPrice)) {
+            throw new Exception('Invalid item price: ' . $itemPrice);
+        }
+        if ($itemQuantity <= 0 || !is_numeric($itemQuantity)) {
+            throw new Exception('Invalid item quantity: ' . $itemQuantity);
+        }
+        if ($itemSubtotal < 0 || !is_numeric($itemSubtotal)) {
+            throw new Exception('Invalid item subtotal: ' . $itemSubtotal);
+        }
+        
+        $stmt->execute([
+            $orderId,
+            $productId,
+            $item['productName'],
+            $itemPrice,
+            $itemQuantity,
+            $itemSubtotal
+        ]);
+    }
+
+    $pdo->commit();
+
+    ob_end_clean();
+    echo json_encode([
+        'success' => true,
+        'message' => 'Order saved successfully',
+        'orderNumber' => $orderNumber,
+        'orderId' => $orderId
+    ]);
+
+} catch(PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        try {
+            $pdo->rollBack();
+        } catch(Exception $rollbackException) {
+            // Ignore rollback errors
+        }
+    }
+    ob_end_clean();
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database Error: ' . $e->getMessage(),
+        'type' => 'database',
+        'sqlState' => $e->getCode()
+    ]);
+} catch(Exception $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        try {
+            $pdo->rollBack();
+        } catch(Exception $rollbackException) {
+            // Ignore rollback errors
+        }
+    }
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage(),
+        'type' => 'exception',
+        'file' => basename($e->getFile()),
+        'line' => $e->getLine()
+    ]);
+}
+?>

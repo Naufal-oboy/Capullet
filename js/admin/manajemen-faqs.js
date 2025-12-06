@@ -73,14 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function showForm(isEdit = false) {
         viewList.classList.add('hidden');
         viewForm.classList.remove('hidden');
-        window.scrollTo(0, 0);
+        // Scroll form into view smoothly instead of jumping to top
+        viewForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
         formTitle.textContent = isEdit ? 'Edit Pertanyaan' : 'Tambah Pertanyaan Baru';
         if (!isEdit) resetForm();
     }
-    function hideForm() {
+    async function hideForm() {
         viewForm.classList.add('hidden');
         viewList.classList.remove('hidden');
         resetForm();
+        await loadFaqs(); // Reload data when returning to list
     }
     function resetForm() {
         inpId.value = '';

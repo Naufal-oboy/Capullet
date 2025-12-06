@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Simpan ke database
-            const response = await fetch('api/save-order.php', {
+            const response = await fetch('./api/save-order.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
