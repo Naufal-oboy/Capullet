@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <p class="description">${product.description}</p>
                         <button class="btn-plus-cart">
                             <i class="fa-solid fa-plus"></i>
-                            Keranjang
+                            Masukkan Keranjang
                         </button>
                     </div>
                 </article>

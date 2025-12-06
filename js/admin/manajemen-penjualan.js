@@ -410,10 +410,10 @@ function renderOrders(ordersToRender = orders) {
                         <i class="fas fa-eye"></i>
                     </button>
                     <button class="btn-edit" onclick="editOrder(${order.id})" title="Edit">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-pen"></i>
                     </button>
                     <button class="btn-delete" onclick="deleteOrder(${order.id})" title="Hapus">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>

@@ -122,6 +122,37 @@
     line-height: 1.6;
 }
 
+/* Tombol hapus ulasan (match style tombol hapus FAQ/kategori) */
+.btn-delete-review {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+    color: var(--white);
+    background-color: var(--hover-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-delete-review i {
+    font-size: 1.1rem;
+    color: inherit;
+}
+
+.btn-delete-review:hover {
+    background-color: #d60073;
+    transform: translateY(-2px);
+}
+
+.btn-delete-review:active {
+    transform: translateY(0);
+}
+
 /* Membatasi panjang teks di tabel agar tidak merusak layout */
 .truncate-text {
     display: -webkit-box;

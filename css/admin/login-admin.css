@@ -226,7 +226,7 @@ body {
 .submit-btn {
     width: 100%;
     background-color: var(--primary-color);
-    color: white;
+    color: var(--text-dark);
     font-weight: 700;
     padding: 0.75rem;
     border-radius: 0.75rem;
@@ -240,6 +240,7 @@ body {
 
 .submit-btn:hover {
     background-color: var(--hover-color);
+    color: whitesmoke;
     box-shadow: 0 6px 20px rgba(238, 3, 132, 0.4);
 }
 

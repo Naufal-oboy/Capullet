@@ -28,6 +28,9 @@
     z-index: 2;
     color: var(--white);
     max-width: 800px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hero-content .subtitle {
@@ -893,7 +896,7 @@
 .faq-item[open] summary {
     background-color: var(--primary-color);
     border-radius: 12px 12px 0 0;
-    color: var(--white);
+    color: var(--text-dark);
 }
 
 .faq-item[open] summary::after {

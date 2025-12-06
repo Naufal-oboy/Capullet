@@ -70,6 +70,72 @@ $stmtHighlight = $pdo->query("
     LIMIT 1
 ");
 $highlightProduct = $stmtHighlight->fetch();
+
+// Get reviews (testimonials) and seed defaults if table empty
+$reviews = [];
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(100),
+        rating INT DEFAULT 5,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    $countStmt = $pdo->query("SELECT COUNT(*) FROM reviews");
+    $reviewCount = (int) ($countStmt->fetchColumn() ?? 0);
+
+    if ($reviewCount === 0) {
+        $seedReviews = [
+            [
+                'name' => 'Budi Santoso',
+                'email' => '',
+                'rating' => 5,
+                'message' => 'Rasanya mantap! Frozen foodnya praktis banget buat stok di rumah. Anak-anak suka banget sama risol mayonya.'
+            ],
+            [
+                'name' => 'PELANGIJAYA.2024',
+                'email' => '',
+                'rating' => 5,
+                'message' => 'Enak dan sudah lama langganan. Rekomen banget buat yang cari camilan gurih di Samarinda.'
+            ],
+            [
+                'name' => 'Oryza Maghfirotunisa',
+                'email' => '',
+                'rating' => 5,
+                'message' => 'Produksi usus ter the best! Enak renyah dan rasanya ga bisa bikin lupa. Bumbunya pas banget.'
+            ],
+            [
+                'name' => 'Muhammad Fadjar',
+                'email' => '',
+                'rating' => 5,
+                'message' => 'Produk ususnya saya suka yang original tidak pedas. Kerasnya pas, krenyes, dan gurihnya mantap pol!'
+            ],
+            [
+                'name' => 'Siti Aminah',
+                'email' => '',
+                'rating' => 5,
+                'message' => 'Pelayanan ramah, pengiriman cepat, dan rasanya konsisten enak dari dulu. Sukses terus Capullet!'
+            ],
+        ];
+
+        $ins = $pdo->prepare("INSERT INTO reviews (name, email, rating, message) VALUES (:name, :email, :rating, :message)");
+        foreach ($seedReviews as $rev) {
+            $ins->execute([
+                ':name' => $rev['name'],
+                ':email' => $rev['email'],
+                ':rating' => $rev['rating'],
+                ':message' => $rev['message'],
+            ]);
+        }
+    }
+
+    $stmtReviews = $pdo->query("SELECT id, name, email, rating, message, created_at FROM reviews ORDER BY created_at DESC");
+    $reviews = $stmtReviews->fetchAll();
+} catch (Exception $e) {
+    $reviews = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -279,85 +345,50 @@ $highlightProduct = $stmtHighlight->fetch();
                 
                 <div class="testimonials-slider-container">
                     <div class="testimonials-track">
-                        <!-- Card 1 -->
+                        <?php
+                        $fallbackAvatars = [
+                            'images/testi1.jpg',
+                            'images/testi2.jpg',
+                            'images/testi3.jpg',
+                            'images/testi4.jpg',
+                            'images/testi5.jpg',
+                        ];
+                        $index = 0;
+                        if (!empty($reviews)):
+                            foreach ($reviews as $rev):
+                                $avatar = $fallbackAvatars[$index % count($fallbackAvatars)];
+                                $index++;
+                        ?>
                         <article class="testimonial-card">
                             <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                             <div class="card-body">
-                                <p>"Rasanya mantap! Frozen foodnya praktis banget buat stok di rumah. Anak-anak suka banget sama risol mayonya."</p>
+                                <p>"<?= htmlspecialchars($rev['message'] ?? '') ?>"</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="user-avatar">
+                                    <img src="<?= htmlspecialchars($avatar) ?>" alt="User">
+                                </div>
+                                <div class="user-info">
+                                    <h4><?= htmlspecialchars($rev['name'] ?? 'Pengguna') ?></h4>
+                                </div>
+                            </div>
+                        </article>
+                        <?php endforeach; else: ?>
+                        <article class="testimonial-card">
+                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                            <div class="card-body">
+                                <p>"Belum ada ulasan. Jadilah yang pertama memberikan ulasan!"</p>
                             </div>
                             <div class="card-footer">
                                 <div class="user-avatar">
                                     <img src="images/testi1.jpg" alt="User">
                                 </div>
                                 <div class="user-info">
-                                    <h4>Budi Santoso</h4>
+                                    <h4>Pengguna</h4>
                                 </div>
                             </div>
                         </article>
-
-                        <!-- Card 2 -->
-                        <article class="testimonial-card">
-                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                            <div class="card-body">
-                                <p>"Enak dan sudah lama langganan. Rekomen banget buat yang cari camilan gurih di Samarinda."</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="user-avatar">
-                                    <img src="images/testi2.jpg" alt="User">
-                                </div>
-                                <div class="user-info">
-                                    <h4>PELANGIJAYA.2024</h4>
-                                </div>
-                            </div>
-                        </article>
-
-                        <!-- Card 3 -->
-                        <article class="testimonial-card">
-                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                            <div class="card-body">
-                                <p>"Produksi usus ter the best! Enak renyah dan 1 lagi rasanya ga bisa bikin lupa. Bumbunya pas banget."</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="user-avatar">
-                                    <img src="images/testi3.jpg" alt="User">
-                                </div>
-                                <div class="user-info">
-                                    <h4>Oryza Maghfirotunisa</h4>
-                                </div>
-                            </div>
-                        </article>
-
-                        <!-- Card 4 -->
-                        <article class="testimonial-card">
-                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                            <div class="card-body">
-                                <p>"Produk ususnya saya suka yang original tidak pedas. Kerasnya pas, krenyes, dan gurihnya mantap pol!"</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="user-avatar">
-                                    <img src="images/testi4.jpg" alt="User">
-                                </div>
-                                <div class="user-info">
-                                    <h4>Muhammad Fadjar</h4>
-                                </div>
-                            </div>
-                        </article>
-
-                        <!-- Card 5 (Extra for smooth loop) -->
-                        <article class="testimonial-card">
-                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-                            <div class="card-body">
-                                <p>"Pelayanan ramah, pengiriman cepat, dan rasanya konsisten enak dari dulu. Sukses terus Capullet!"</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="user-avatar">
-                                    <img src="images/testi5.jpg" alt="User">
-                                </div>
-                                <div class="user-info">
-                                    <h4>Siti Aminah</h4>
-                                </div>
-                            </div>
-                        </article>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Navigasi -->
@@ -390,18 +421,6 @@ $highlightProduct = $stmtHighlight->fetch();
                         <div class="form-group">
                             <label for="home-review-email">Email (opsional)</label>
                             <input type="email" id="home-review-email" name="email" placeholder="nama@email.com">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="home-review-rating">Rating</label>
-                            <select id="home-review-rating" name="rating" required>
-                                <option value="5">5 - Sangat puas</option>
-                                <option value="4">4 - Puas</option>
-                                <option value="3">3 - Cukup</option>
-                                <option value="2">2 - Kurang</option>
-                                <option value="1">1 - Tidak puas</option>
-                            </select>
                         </div>
                     </div>
                     <div class="form-group">

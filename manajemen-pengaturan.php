@@ -145,64 +145,8 @@ try {
     <main class="admin-main container">
         <h1 class="admin-page-title">PENGATURAN</h1>
 
-        <!-- SECTION FAQs -->
-        <div class="management-container" id="faq-list-view">
-            <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;"><i class="fas fa-question-circle"></i> Frequently Asked Questions (FAQs)</h2>
-            <div class="management-header">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari Pertanyaan...">
-                </div>
-                <button class="btn-add" id="btnShowAddForm"><i class="fas fa-plus"></i> Tambah FAQs</button>
-            </div>
-
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">#</th>
-                            <th style="width: 30%;">Pertanyaan</th>
-                            <th>Jawaban</th>
-                            <th style="width: 120px; text-align: right;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="faqTableBody">
-                        <!-- Data akan di-render via JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- VIEW 2: FORM TAMBAH/EDIT (Hidden) -->
-        <div class="management-container hidden" id="faq-form-view">
-            <h2 id="formTitle" style="margin-bottom: 1.5rem; color: var(--secondary-color);">Tambah Pertanyaan Baru</h2>
-            
-            <div class="faq-form">
-                <input type="hidden" id="faqId">
-                
-                <div class="form-group">
-                    <label for="faqQuestion">Pertanyaan</label>
-                    <input type="text" id="faqQuestion" placeholder="Masukkan pertanyaan yang sering diajukan">
-                </div>
-
-                <div class="form-group">
-                    <label for="faqAnswer">Jawaban</label>
-                    <textarea id="faqAnswer" rows="5" placeholder="Tuliskan jawaban lengkap di sini..."></textarea>
-                </div>
-
-                <div class="form-actions-buttons">
-                    <button class="btn-edit" id="btnCancelForm">
-                        <i class="fas fa-undo"></i> Batal
-                    </button>
-                    <button class="btn-add" id="btnSaveFaq">
-                        <i class="fas fa-save"></i> Simpan
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- SECTION PENGATURAN WEBSITE -->
-        <div class="settings-container" style="margin-top: 3rem;">
+        <div class="settings-container">
             <h2 style="color: var(--secondary-color); margin-bottom: 2rem; font-size: 1.8rem;"><i class="fas fa-cog"></i> Pengaturan Website</h2>
             
             <!-- Logo Section -->
@@ -279,6 +223,84 @@ try {
                     </div>
 
                     <button type="button" class="btn btn-primary" onclick="updateAboutSection()">Update About Section</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION Ulasan Pelanggan -->
+        <div class="management-container" style="margin-top: 3rem;">
+            <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;"><i class="fas fa-star"></i> Ulasan Pelanggan</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">#</th>
+                            <th style="width: 18%;">Nama</th>
+                            <th style="width: 18%;">Email</th>
+                            <th>Pesan</th>
+                            <th style="width: 150px;">Tanggal</th>
+                            <th style="width: 110px; text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewsTableBody">
+                        <tr><td colspan="6" style="text-align:center; color:#666;">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION FAQs -->
+        <div class="management-container" id="faq-list-view" style="margin-top: 3rem;">
+            <h2 style="color: var(--secondary-color); margin-bottom: 1.5rem;"><i class="fas fa-question-circle"></i> Frequently Asked Questions (FAQs)</h2>
+            <div class="management-header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari Pertanyaan...">
+                </div>
+                <button class="btn-add" id="btnShowAddForm"><i class="fas fa-plus"></i> Tambah FAQs</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="width: 30%;">Pertanyaan</th>
+                            <th>Jawaban</th>
+                            <th style="width: 120px; text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="faqTableBody">
+                        <!-- Data akan di-render via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- VIEW 2: FORM TAMBAH/EDIT (Hidden) -->
+        <div class="management-container hidden" id="faq-form-view">
+            <h2 id="formTitle" style="margin-bottom: 1.5rem; color: var(--secondary-color);">Tambah Pertanyaan Baru</h2>
+            
+            <div class="faq-form">
+                <input type="hidden" id="faqId">
+                
+                <div class="form-group">
+                    <label for="faqQuestion">Pertanyaan</label>
+                    <input type="text" id="faqQuestion" placeholder="Masukkan pertanyaan yang sering diajukan">
+                </div>
+
+                <div class="form-group">
+                    <label for="faqAnswer">Jawaban</label>
+                    <textarea id="faqAnswer" rows="5" placeholder="Tuliskan jawaban lengkap di sini..."></textarea>
+                </div>
+
+                <div class="form-actions-buttons">
+                    <button class="btn-edit" id="btnCancelForm">
+                        <i class="fas fa-undo"></i> Batal
+                    </button>
+                    <button class="btn-add" id="btnSaveFaq">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
                 </div>
             </div>
         </div>

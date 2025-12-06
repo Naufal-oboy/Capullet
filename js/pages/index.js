@@ -296,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const name = (document.getElementById('home-review-name')?.value || '').trim();
             const email = (document.getElementById('home-review-email')?.value || '').trim();
-            const rating = document.getElementById('home-review-rating')?.value || '5';
             const message = (document.getElementById('home-review-message')?.value || '').trim();
 
             if (!name || !message) {
@@ -307,13 +306,15 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('api/reviews/create.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, rating, message })
+                body: JSON.stringify({ name, email, message })
             }).then(res => res.json())
               .then(data => {
                   if (!data.success) throw new Error(data.message || 'Gagal menyimpan ulasan');
                   alert('Terima kasih! Ulasan Anda sudah disimpan.');
                   reviewForm.reset();
                   closeReviewModal();
+                  // Refresh agar ulasan baru tampil di slider
+                  window.location.reload();
               })
               .catch(err => {
                   console.error(err);

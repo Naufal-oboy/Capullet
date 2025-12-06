@@ -219,3 +219,83 @@ async function updateFooter() {
         });
     }
 }
+
+// ==== Reviews Management ====
+const reviewsTableBody = document.getElementById('reviewsTableBody');
+
+async function loadReviews() {
+    if (!reviewsTableBody) return;
+    try {
+        const res = await fetch('api/reviews/list.php', { cache: 'no-store' });
+        const result = await res.json();
+        if (!result.success) throw new Error(result.message || 'Gagal memuat ulasan');
+        renderReviews(result.reviews || []);
+    } catch (err) {
+        reviewsTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#e11d48;">${err.message || 'Gagal memuat ulasan.'}</td></tr>`;
+    }
+}
+
+function renderReviews(items) {
+    if (!items.length) {
+        reviewsTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#666;">Belum ada ulasan.</td></tr>';
+        return;
+    }
+
+    reviewsTableBody.innerHTML = items.map((item, idx) => {
+        const dateStr = item.created_at ? new Date(item.created_at).toLocaleString('id-ID') : '-';
+        const messageSafe = (item.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const emailSafe = (item.email || '-').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const nameSafe = (item.name || '-').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `
+            <tr>
+                <td>${idx + 1}</td>
+                <td>${nameSafe}</td>
+                <td>${emailSafe}</td>
+                <td style="white-space: pre-wrap;">${messageSafe}</td>
+                <td>${dateStr}</td>
+                <td style="text-align: right;">
+                    <button class="btn-delete-review" data-id="${item.id}" aria-label="Hapus ulasan">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function deleteReview(id) {
+    try {
+        const res = await fetch('api/reviews/delete.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const result = await res.json();
+        if (!result.success) throw new Error(result.message || 'Gagal menghapus ulasan');
+        Swal.fire({ icon: 'success', title: 'Terhapus', timer: 1200, showConfirmButton: false });
+        loadReviews();
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: err.message || 'Tidak dapat menghapus ulasan' });
+    }
+}
+
+reviewsTableBody?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-delete-review');
+    if (!btn) return;
+    const id = Number(btn.dataset.id || 0);
+    if (!id) return;
+
+    Swal.fire({
+        title: 'Hapus ulasan ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, hapus',
+        cancelButtonText: 'Batal'
+    }).then((res) => {
+        if (res.isConfirmed) deleteReview(id);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadReviews();
+});
