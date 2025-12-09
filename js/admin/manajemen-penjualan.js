@@ -384,6 +384,8 @@ function renderOrders(ordersToRender = orders) {
         return;
     }
 
+    const startNumber = (currentPage - 1) * 10; // keep numbering across pages
+
     ordersToRender.forEach((order, index) => {
         const itemsCount = order.items.length;
         const itemsText = itemsCount === 1 
@@ -392,7 +394,7 @@ function renderOrders(ordersToRender = orders) {
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td style="text-align: center;">${index + 1}</td>
+            <td style="text-align: center;">${startNumber + index + 1}</td>
             <td><strong>${order.orderNumber}</strong></td>
             <td>${formatDate(order.date)}</td>
             <td>
